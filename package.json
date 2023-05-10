@@ -14,10 +14,13 @@
     "lint": "eslint src/ --ext .ts",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
-    "ts": "ts-node"
+    "ts": "ts-node",
+    "mock:server": "json-server ./mocks/mock-server-data.json --port 3123"
   },
   "dependencies": {
-    "chalk": "5.0.1"
+    "chalk": "5.0.1",
+    "dayjs": "1.11.7",
+    "got": "12.6.0"
   },
   "devDependencies": {
     "@types/node": "18.16.3",
@@ -25,6 +28,7 @@
     "@typescript-eslint/parser": "5.46.0",
     "eslint": "8.39.0",
     "eslint-config-htmlacademy": "9.1.1",
+    "json-server": "0.17.1",
     "prettier": "2.8.8",
     "rimraf": "3.0.2",
     "ts-node": "10.9.1",
