@@ -1,5 +1,6 @@
 import { Coordinates } from './coordinates.type';
-import { CityType } from './city-type.enum';
+
+export type CityType = 'Paris' | 'Cologne' | 'Brussels' | 'Amsterdam' | 'Hamburg' | 'Dusseldorf';
 
 export type City = {
   name: CityType;
