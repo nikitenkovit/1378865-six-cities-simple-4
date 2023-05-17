@@ -6,7 +6,7 @@ export function getRandomItem<T>(items: T[]): T {
   return items[generateRandomValue(0, items.length - 1)];
 }
 
-export function getFixedNumberRandomItems<T>(fixedNumber: number, items: T[]): T[] { // TODO Тесты?
+export function getFixedNumberRandomItems<T>(fixedNumber: number, items: T[]): T[] {
   if (fixedNumber >= items.length) {
     return items;
   }
