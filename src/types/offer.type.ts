@@ -2,8 +2,7 @@ import { City } from './city.type';
 import { GoodsType } from './goods.type';
 import { User } from './user.type';
 import { Coordinates } from './coordinates.type';
-
-export type OfferType = 'apartment' | 'room' | 'house' | 'hotel';
+import { OfferType } from './offer.enum';
 
 export type Offer = {
   title: string;
