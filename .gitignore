@@ -11,3 +11,4 @@ coverage
 *.log
 *.env
 test-data.tsv
+/mongodb

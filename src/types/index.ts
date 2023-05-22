@@ -5,3 +5,4 @@ export * from './offer.type';
 export * from './user.type';
 export * from './mock-data.type';
 export * from './goods.type';
+export * from './offer.enum';
