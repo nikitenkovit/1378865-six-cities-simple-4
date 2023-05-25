@@ -1,0 +1,353 @@
+openapi: 3.0.0
+info:
+  title: API сервер для демо-проекта «Шесть городов (простой)».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Шесть городов (простой)».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+tags:
+  - name: users
+    description: Действия с пользователем.
+  - name: offers
+    description: Действия с предложениями по аренде.
+  - name: comments
+    description: Действия с комментариями.
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя.
+
+      requestBody:
+        description: Информация для создания нового пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/user/userCreate.yml'
+        required: true
+
+      responses:
+        '201':
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/user/userCreated.yml'
+
+        '409':
+          description: Пользователь с таким email уже существует.
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля
+
+      requestBody:
+        description: Информация для авторизации пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/user/userLogin.yml'
+        required: true
+
+      responses:
+        '200':
+          description: Пользователь завторизован. Токен пользователя.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Bearer sdsd54s4fs54
+
+        '401':
+          description: Неправильный логин или пароль.
+
+        '404':
+          description: Пользователь не найден.
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+
+      requestBody:
+        description: Токен пользователя.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Bearer sdsd54s4fs54
+        required: true
+
+      responses:
+        '200':
+          description: Пользователь авторизован.
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/user/userValid.yml'
+
+        '401':
+          description: Пользователь не авторизован.
+
+  /users/{userId}/avatar:
+    post:
+      tags:
+        - users
+      summary: Загрузить изображение аватара
+      description: Загружает изображение аватара пользователя. Изображение
+        аватара должно быть в формате `png` или `jpg`.
+
+      #      TODO добавить parameters и requestBody
+
+      responses:
+        201:
+          description: Аватар заугружен успешно
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized
+
+  /offers:
+    get:
+      tags:
+        - offers
+      summary: Получить список предложений по аренде
+      description: Получает список предложений по аренде.
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        '200':
+          description: Список предложений по аренде.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './schemas/offer/offerListItem.yml'
+
+    post:
+      tags:
+        - offers
+      summary: Создать предложение по аренде
+      description: Создает новое предложение по аренде.
+
+      requestBody:
+        description: Информация для создания нового предложения по аренде.
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/offer/offerCreate.yml'
+        required: true
+
+      responses:
+        '200':
+          description: Предложение по аренде создано успешно.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: './schemas/offer/offerCreate.yml'
+                  - type: object
+                    properties:
+                      commentsLength:
+                        type: number
+                        example: 2
+
+        '401':
+          description: Для размещения предложения по аренде, пользователь должен быть авторизован.
+
+        '400':
+          description: Не заполнены обязательные поля.
+
+  /offers/{offerId}:
+    get:
+      tags:
+        - offers
+      summary: Получение информации по одному предложению по аренде.
+      description: Получение детальной информации по одному предложению по аренде.
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Информация о предложении по аренде.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: './schemas/offer/offerCreate.yml'
+                  - type: object
+                    properties:
+                      commentsLength:
+                        type: number
+                        example: 2
+        '404':
+          description: Предложение по аренде не найдено.
+
+    patch:
+      tags:
+        - offers
+      summary: Редактирование предложения по аренде
+      description: Редактирует выбранное предложение по аренде и возвращает в качестве ответа
+        обновленный объект предложения по аренде.
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+
+      requestBody:
+        description: Информация для редактирования предложения по аренде.
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/offer/offerCreate.yml'
+        required: true
+
+      responses:
+        "200":
+          description: Отредактированное предложение по аренде.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: './schemas/offer/offerCreate.yml'
+                  - type: object
+                    properties:
+                      commentsLength:
+                        type: number
+                        example: 2
+
+        "400":
+          description: Незаполненны обязательные поля.
+
+        "401":
+          description: Пользователь должен быть авторизован.
+
+        "403":
+          description: У пользователя нет прав редактировать данное предложение по аренде.
+
+        '404':
+          description: Предложение по аренде не найдено.
+
+    delete:
+      tags:
+        - offers
+      summary: Удаление предложения по аренде
+      description: Удаляет предложение по аренде и связанные с ним комментарии.
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        "200":
+          description: Предложение по аренде удалено.
+
+        "401":
+          description: Пользователь должен быть авторизован.
+
+        "403":
+          description: У пользователя нет прав редактировать данное предложение по аренде.
+
+        "404":
+          description: Предложение по аренде не найдено.
+
+  /comments/{offerId}:
+    get:
+      tags:
+        - comments
+      summary: Список комментариев предложения по аренде
+      description: Получение списка комментариев для определенного предложения по аренде.
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        "200":
+          description: Список комментариев для предложения по аренде.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: './schemas/comment/comment.yml'
+                    - type: object
+                      properties:
+                        date:
+                          type: string
+                          example: 12.3.23
+
+        '400':
+          description: Комментарии не найдены.
+
+    post:
+      tags:
+        - comments
+      summary: Добавление комментария
+      description: Добавление комментария к предложению по аренде.
+      parameters:
+        - in: query
+          name: offerId
+          required: true
+          schema:
+            type: integer
+            example: 1
+
+      requestBody:
+        description: Информация для создания нового комментария.
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/comment/comment.yml'
+        required: true
+
+      responses:
+        "200":
+          description: Комментарий создан, присылаю его в ответ.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: './schemas/comment/comment.yml'
+                  - type: object
+                    properties:
+                      date:
+                        type: string
+                        example: 12.3.23
+
+        "401":
+          description: Для размещения комментария, пользователь должен быть авторизован.
+
+        "400":
+          description: Незаполненны обязательные поля.

@@ -1,0 +1,14 @@
+type: object
+
+properties:
+  email:
+    type: string
+    example: name@mail.ru
+
+  password:
+    type: string
+    example: qwerty
+
+required:
+  - email
+  - password
