@@ -1,0 +1,23 @@
+type: object
+
+properties:
+  name:
+    type: string
+    example: Vitaliy
+
+  email:
+    type: string
+    example: name@mail.ru
+
+  isPro:
+    type: boolean
+    example: false
+
+  avatarPath:
+    type: string
+    example: file.png
+
+required:
+  - name
+  - email
+  - isPro

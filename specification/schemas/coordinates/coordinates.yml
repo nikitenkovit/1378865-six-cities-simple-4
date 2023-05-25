@@ -1,0 +1,10 @@
+type: object
+
+properties:
+  latitude:
+    type: number
+    example: 48.85661
+
+  longitude:
+    type: number
+    example: 2.351499

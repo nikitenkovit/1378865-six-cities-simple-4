@@ -1,0 +1,19 @@
+type: object
+
+properties:
+  name:
+    type: string
+    example: Vitaliy
+
+  email:
+    type: string
+    example: name@mail.ru
+
+  password:
+    type: string
+    example: zaq1xsw2cde3
+
+required:
+  - email
+  - password
+  - name

@@ -1,0 +1,66 @@
+type: object
+
+properties:
+  title:
+    type: string
+    example: Some title
+
+  description:
+    type: string
+    example: Some description
+
+  postDate:
+    type: Date
+    example: 12.3.23
+
+  city:
+    type: object
+    $ref: '../city/city.yml'
+
+  previewImage:
+    type: string
+    example: file.png
+
+  images:
+    type: array
+    items:
+      type: string
+      example: file.png
+
+  isPremium:
+    type: boolean
+    example: true
+
+  rating:
+    type: number
+    example: 3.7
+
+  type:
+    type: string
+    example: house
+
+  bedrooms:
+    type: number
+    example: 3
+
+  maxGuests:
+    type: number
+    example: 3
+
+  price:
+    type: number
+    example: 1500
+
+  goods:
+    type: array
+    items:
+      type: string
+      example: Baby seat
+
+  userId:
+    type: string
+    example: testId
+
+  location:
+    type: object
+    $ref: '../coordinates/coordinates.yml'

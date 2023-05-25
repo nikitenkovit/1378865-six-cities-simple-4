@@ -1,0 +1,33 @@
+type: object
+
+properties:
+  price:
+    type: number
+    example: 1500
+
+  title:
+    type: string
+    example: Some title
+
+  type:
+    type: string
+    example: house
+
+  postDate:
+    type: Date
+    example: 12.3.23
+
+  city:
+    $ref: '../city/city.yml'
+
+  previewImage:
+    type: string
+    example: file.png
+
+  isPremium:
+    type: boolean
+    example: true
+
+  commentsLength:
+    type: number
+    example: 3
