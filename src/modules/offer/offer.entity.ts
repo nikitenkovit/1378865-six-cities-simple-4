@@ -36,19 +36,16 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    // TODO подумать над валидацией
   })
   public city!: City;
 
   @prop({
     required: true,
-    // TODO подумать над валидацией. (В виде УРЛ???)
   })
   public previewImage!: string;
 
   @prop({
     required: true,
-    // TODO подумать над валидацией. (В виде массива УРЛ???)
   })
   public images!: string[];
 
@@ -94,7 +91,6 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    // enum: GoodsType, TODO изменить тип GoodsType на enum???
   })
   public goods!: GoodsType[];
 
@@ -106,18 +102,16 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    // TODO подумать над валидацией
   })
   public host!: User;
 
   @prop({
     required: false,
   })
-  public commentsLength!: number;
+  public commentCount!: number;
 
   @prop({
     required: true,
-    // TODO подумать над валидацией.
   })
   public location!: Coordinates;
 }

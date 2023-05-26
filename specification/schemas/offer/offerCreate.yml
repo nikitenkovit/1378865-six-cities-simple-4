@@ -31,10 +31,6 @@ properties:
     type: boolean
     example: true
 
-  rating:
-    type: number
-    example: 3.7
-
   type:
     type: string
     example: house

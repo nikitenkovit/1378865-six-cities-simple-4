@@ -167,9 +167,12 @@ paths:
                   - $ref: './schemas/offer/offerCreate.yml'
                   - type: object
                     properties:
-                      commentsLength:
+                      commentCount:
                         type: number
                         example: 2
+                      rating:
+                        type: number
+                        example: 3.7
 
         '401':
           description: Для размещения предложения по аренде, пользователь должен быть авторизован.
@@ -200,7 +203,7 @@ paths:
                   - $ref: './schemas/offer/offerCreate.yml'
                   - type: object
                     properties:
-                      commentsLength:
+                      commentCount:
                         type: number
                         example: 2
         '404':
@@ -237,7 +240,7 @@ paths:
                   - $ref: './schemas/offer/offerCreate.yml'
                   - type: object
                     properties:
-                      commentsLength:
+                      commentCount:
                         type: number
                         example: 2
 
