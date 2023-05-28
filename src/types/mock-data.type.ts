@@ -1,6 +1,6 @@
 import { City } from './city.type';
 import { GoodsType } from './goods.type';
-import { OfferType } from './offer.type';
+import { OfferType } from './offer.enum';
 import { User } from './user.type';
 
 export type MockData = {

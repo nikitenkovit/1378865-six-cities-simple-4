@@ -28,6 +28,6 @@ properties:
     type: boolean
     example: true
 
-  commentsLength:
+  commentCount:
     type: number
     example: 3
