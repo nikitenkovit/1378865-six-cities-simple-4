@@ -4,7 +4,6 @@ export function createOffer(offerData: string): Offer {
   const [
     title,
     description,
-    postDate,
     cityString,
     previewImage,
     images,
@@ -19,14 +18,8 @@ export function createOffer(offerData: string): Offer {
     locationString,
   ] = offerData.replace('\n', '').split('\t');
 
-  const [nameName, CityLatitude, CityLongitude] = cityString.trim().split(',');
   const [name, password, email, isPro, avatarPath] = hostString.trim().split(',');
   const [locationLatitude, locationLongitude] = locationString.trim().split(',');
-
-  const city = {
-    name: nameName as CityType,
-    coordinates: { latitude: Number(CityLatitude), longitude: Number(CityLongitude) },
-  };
 
   const host: User = {
     name,
@@ -44,8 +37,7 @@ export function createOffer(offerData: string): Offer {
   return {
     title,
     description,
-    postDate: new Date(postDate),
-    city,
+    city: cityString as CityType,
     previewImage: previewImage.trim(),
     images: images.split(',').map((image) => image.trim()),
     isPremium: isPremium === 'true',

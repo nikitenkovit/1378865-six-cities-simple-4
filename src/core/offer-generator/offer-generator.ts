@@ -1,17 +1,13 @@
-import dayjs from 'dayjs';
 import { OfferGeneratorInterface } from './offer-generator.interface.js';
 import {
   generateRandomValue,
   getFixedNumberRandomItems,
   getRandomItem,
-  getStringCity,
   getStringLocation,
   getStringUser,
 } from '../helpers/index.js';
-import { User, GoodsType, OfferType, City, MockData } from 'types';
+import { User, GoodsType, OfferType, MockData } from 'types';
 
-const FIRST_WEEK_DAY = 1;
-const LAST_WEEK_DAY = 7;
 const NUMBER_OF_IMAGES = 6;
 const RATING_MINIMUM = 1;
 const RATING_MAXIMUM = 5;
@@ -38,10 +34,7 @@ export default class OfferGenerator implements OfferGeneratorInterface {
     ).join(',');
     const title = getRandomItem<string>(this.mockData.title);
     const description = getRandomItem<string>(this.mockData.description);
-    const postDate = dayjs()
-      .subtract(generateRandomValue(FIRST_WEEK_DAY, LAST_WEEK_DAY), 'day')
-      .toISOString();
-    const city = getStringCity(getRandomItem<City>(this.mockData.city));
+    const city = getRandomItem<string>(this.mockData.city);
     const previewImage = getRandomItem<string>(this.mockData.previewImage);
     const isPremium = getRandomItem<boolean>(this.mockData.isPremium);
     const rating = generateRandomValue(RATING_MINIMUM, RATING_MAXIMUM, RATING_PRECISION);
@@ -55,7 +48,6 @@ export default class OfferGenerator implements OfferGeneratorInterface {
     return [
       title,
       description,
-      postDate,
       city,
       previewImage,
       images,

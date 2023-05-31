@@ -1,10 +1,9 @@
 import typegoose, { defaultClasses, getModelForClass, Ref } from '@typegoose/typegoose';
-import { City } from '../../types/city.type.js';
 import { Coordinates } from '../../types/coordinates.type.js';
 import { GoodsType } from '../../types/goods.type.js';
 import { OfferType } from '../../types/offer.enum.js';
-import { User } from '../../types/user.type';
 import { UserEntity } from '../user/user.entity.js';
+import { CityEntity } from '../city/city.entity.js';
 
 const { prop, modelOptions } = typegoose;
 
@@ -15,29 +14,28 @@ export interface OfferEntity extends defaultClasses.Base {}
   },
 })
 export class OfferEntity extends defaultClasses.TimeStamps {
+  // TODO перенести всю валидацию в ДТО
   @prop({
     required: true,
     trim: true,
-    minlength: [10, 'Min length for title is 10'],
-    maxlength: [100, 'Max length for title is 100'],
+    // minlength: [10, 'Min length for title is 10'],
+    // maxlength: [100, 'Max length for title is 100'],
   })
   public title!: string;
 
   @prop({
     required: true,
     trim: true,
-    minlength: [20, 'Min length for description is 20'],
-    maxlength: [1024, 'Max length for description is 1024'],
+    // minlength: [20, 'Min length for description is 20'],
+    // maxlength: [1024, 'Max length for description is 1024'],
   })
   public description!: string;
 
-  @prop({ required: true })
-  public postDate!: Date;
-
   @prop({
+    ref: CityEntity,
     required: true,
   })
-  public city!: City;
+  public city!: Ref<CityEntity>;
 
   @prop({
     required: true,
@@ -99,11 +97,6 @@ export class OfferEntity extends defaultClasses.TimeStamps {
     required: true,
   })
   public userId!: Ref<UserEntity>;
-
-  @prop({
-    required: true,
-  })
-  public host!: User;
 
   @prop({
     required: false,
