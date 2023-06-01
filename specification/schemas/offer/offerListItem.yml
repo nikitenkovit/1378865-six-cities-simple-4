@@ -13,8 +13,8 @@ properties:
     type: string
     example: house
 
-  postDate:
-    type: Date
+  createdAt:
+    type: string
     example: 12.3.23
 
   city:
@@ -27,6 +27,10 @@ properties:
   isPremium:
     type: boolean
     example: true
+
+  rating:
+    type: number
+    example: 4.25
 
   commentCount:
     type: number

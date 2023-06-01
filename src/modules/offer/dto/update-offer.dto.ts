@@ -3,7 +3,6 @@ import { City, Coordinates, GoodsType, OfferType } from 'types';
 export default class UpdateOfferDto {
   public title?: string;
   public description?: string;
-  public postDate?: Date;
   public city?: City;
   public previewImage?: string;
   public images?: string[];

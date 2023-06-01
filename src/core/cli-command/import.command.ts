@@ -15,6 +15,8 @@ import { UserModel } from '../../modules/user/user.entity.js';
 import { CityModel } from '../../modules/city/city.entity.js';
 import { OfferModel } from '../../modules/offer/offer.entity.js';
 import { DatabaseClientInterface } from '../database-client/database-client.interface.js';
+import { CityData } from '../../constants/city.js';
+import { City } from 'types';
 
 const DEFAULT_DB_PORT = '27017';
 const DEFAULT_USER_PASSWORD = '123456';
@@ -39,22 +41,34 @@ export default class ImportCommand implements CliCommandInterface {
     this.databaseService = new MongoClientService(this.logger);
   }
 
-  private async saveOffer(offer: Offer) {
-    await this.cityService.findOrCreate(offer.city);
+  private async saveSites() {
+    const citesArray: City[] = Object.values(CityData);
+    citesArray?.forEach(async (city) => {
+      await this.cityService.findOrCreate(city);
+    });
+  }
 
-    const user = await this.userService.findOrCreate({
-      ...offer.host,
-      password: DEFAULT_USER_PASSWORD
-    }, this.salt);
+  private async saveOffer(offer: Offer) {
+    const user = await this.userService.findOrCreate(
+      {
+        ...offer.host,
+        password: DEFAULT_USER_PASSWORD,
+      },
+      this.salt,
+    );
+
+    const city = await this.cityService.findByName(offer.city);
 
     await this.offerService.create({
       ...offer,
       userId: user.id,
+      city: city?.id,
     });
   }
 
   private async onLine(line: string, resolve: () => void) {
     const offer = createOffer(line);
+    await this.saveSites();
     await this.saveOffer(offer);
     resolve();
   }
@@ -64,7 +78,14 @@ export default class ImportCommand implements CliCommandInterface {
     this.databaseService.disconnect();
   }
 
-  public async execute(filename: string, login: string, password: string, host: string, dbname: string, salt: string): Promise<void> {
+  public async execute(
+    filename: string,
+    login: string,
+    password: string,
+    host: string,
+    dbname: string,
+    salt: string,
+  ): Promise<void> {
     const uri = getMongoURI(login, password, host, DEFAULT_DB_PORT, dbname);
     this.salt = salt;
 
@@ -76,7 +97,7 @@ export default class ImportCommand implements CliCommandInterface {
     fileReader.on('end', this.onComplete);
     try {
       await fileReader.read();
-    } catch(err) {
+    } catch (err) {
       console.log(`Can't read the file: ${getErrorMessage(err)}`);
     }
   }

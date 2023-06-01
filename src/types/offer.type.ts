@@ -1,4 +1,3 @@
-import { City } from './city.type';
 import { GoodsType } from './goods.type';
 import { User } from './user.type';
 import { Coordinates } from './coordinates.type';
@@ -7,8 +6,7 @@ import { OfferType } from './offer.enum';
 export type Offer = {
   title: string;
   description: string;
-  postDate: Date;
-  city: City;
+  city: string;
   previewImage: string;
   images: string[];
   isPremium: boolean;

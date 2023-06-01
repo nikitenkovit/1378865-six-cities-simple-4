@@ -6,3 +6,6 @@ export * from './user.type';
 export * from './mock-data.type';
 export * from './goods.type';
 export * from './offer.enum';
+export * from './app-component.enum';
+export * from './http-method.enum';
+export * from './offer-request-query.type';

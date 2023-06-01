@@ -14,6 +14,8 @@ tags:
     description: Действия с предложениями по аренде.
   - name: comments
     description: Действия с комментариями.
+  - name: cites
+    description: Действия с городами.
 paths:
   /users/register:
     post:
@@ -39,7 +41,7 @@ paths:
                 $ref: './schemas/user/userCreated.yml'
 
         '409':
-          description: Пользователь с таким email уже существует.
+          description: User with email «email» exists.
 
   /users/login:
     post:
@@ -158,7 +160,7 @@ paths:
         required: true
 
       responses:
-        '200':
+        '201':
           description: Предложение по аренде создано успешно.
           content:
             application/json:
@@ -173,6 +175,10 @@ paths:
                       rating:
                         type: number
                         example: 3.7
+                      createdAt:
+                        type: string
+                        example: 12.3.23
+
 
         '401':
           description: Для размещения предложения по аренде, пользователь должен быть авторизован.
@@ -206,8 +212,13 @@ paths:
                       commentCount:
                         type: number
                         example: 2
-        '404':
-          description: Предложение по аренде не найдено.
+                      createdAt:
+                        type: string
+                        example: 12.3.23
+                      host:
+                        $ref: './schemas/user/userValid.yml'
+        '204':
+          description: No Content
 
     patch:
       tags:
@@ -243,6 +254,12 @@ paths:
                       commentCount:
                         type: number
                         example: 2
+                      createdAt:
+                        type: string
+                        example: 12.3.23
+
+        '204':
+          description: No content
 
         "400":
           description: Незаполненны обязательные поля.
@@ -252,9 +269,6 @@ paths:
 
         "403":
           description: У пользователя нет прав редактировать данное предложение по аренде.
-
-        '404':
-          description: Предложение по аренде не найдено.
 
     delete:
       tags:
@@ -270,7 +284,10 @@ paths:
 
       responses:
         "200":
-          description: Предложение по аренде удалено.
+          description: Предложение по аренде ID:{offerId} удалено.
+
+        "204":
+          description: No content.
 
         "401":
           description: Пользователь должен быть авторизован.
@@ -278,8 +295,6 @@ paths:
         "403":
           description: У пользователя нет прав редактировать данное предложение по аренде.
 
-        "404":
-          description: Предложение по аренде не найдено.
 
   /comments/{offerId}:
     get:
@@ -354,3 +369,44 @@ paths:
 
         "400":
           description: Незаполненны обязательные поля.
+
+  /cites:
+    get:
+      tags:
+        - cites
+      summary: Список городов
+      description: Получение списка городов.
+
+      responses:
+        "200":
+          description: Список городов.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: './schemas/city/city.yml'
+  /cites/{cityId}:
+    get:
+      tags:
+        - cites
+      summary: Получение одного города
+      description: Получение одного города.
+      parameters:
+        - in: path
+          name: cityId
+          required: true
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        "200":
+          description: Получение одного города.
+          content:
+            application/json:
+              schema:
+                $ref: './schemas/city/city.yml'
+        '204':
+          description: No Content

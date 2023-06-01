@@ -3,7 +3,6 @@ import { City, Coordinates, GoodsType, OfferType } from 'types';
 export default class CreateOfferDto {
   public title!: string;
   public description!: string;
-  public postDate!: Date;
   public city!: City;
   public previewImage!: string;
   public images!: string[];
@@ -14,6 +13,5 @@ export default class CreateOfferDto {
   public price!: number;
   public goods!: GoodsType[];
   public userId!: string;
-  public commentCount?: number;
   public location!: Coordinates;
 }

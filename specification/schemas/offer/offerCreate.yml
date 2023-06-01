@@ -9,10 +9,6 @@ properties:
     type: string
     example: Some description
 
-  postDate:
-    type: Date
-    example: 12.3.23
-
   city:
     type: object
     $ref: '../city/city.yml'
