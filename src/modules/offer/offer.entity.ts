@@ -54,9 +54,10 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   public isPremium!: boolean;
 
   @prop({
-    required: true,
-    min: [1, 'Min rating is 1'],
-    max: [5, 'Max rating is 5'],
+    required: false,
+    default: 0,
+    // min: [1, 'Min rating is 1'],
+    // max: [5, 'Max rating is 5'],
   })
   public rating!: number;
 
@@ -100,6 +101,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: false,
+    default: 0,
   })
   public commentCount!: number;
 

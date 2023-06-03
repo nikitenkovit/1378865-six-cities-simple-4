@@ -7,7 +7,8 @@ export interface ControllerInterface {
   send<T>(res: Response, statusCode: number, data: T): void;
   ok<T>(res: Response, data: T): void;
   created<T>(res: Response, data: T): void;
-  noContent(detail?: string): void;
+  noContent<T>(res: Response, data: T): void;
+  notFound(errorText: string, detail?: string): void;
   conflict(errorText: string, detail?: string): void;
   unauthorized(errorText: string, detail?: string): void;
   notImplemented(detail?: string): void;

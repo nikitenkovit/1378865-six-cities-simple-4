@@ -179,7 +179,6 @@ paths:
                         type: string
                         example: 12.3.23
 
-
         '401':
           description: Для размещения предложения по аренде, пользователь должен быть авторизован.
 
@@ -200,7 +199,7 @@ paths:
             type: integer
 
       responses:
-        "200":
+        '200':
           description: Информация о предложении по аренде.
           content:
             application/json:
@@ -217,8 +216,8 @@ paths:
                         example: 12.3.23
                       host:
                         $ref: './schemas/user/userValid.yml'
-        '204':
-          description: No Content
+        '404':
+          description: Offer with id {offerId} not found.
 
     patch:
       tags:
@@ -242,7 +241,7 @@ paths:
         required: true
 
       responses:
-        "200":
+        '200':
           description: Отредактированное предложение по аренде.
           content:
             application/json:
@@ -258,16 +257,16 @@ paths:
                         type: string
                         example: 12.3.23
 
-        '204':
-          description: No content
+        '404':
+          description: Offer with id {offerId} not found.
 
-        "400":
+        '400':
           description: Незаполненны обязательные поля.
 
-        "401":
+        '401':
           description: Пользователь должен быть авторизован.
 
-        "403":
+        '403':
           description: У пользователя нет прав редактировать данное предложение по аренде.
 
     delete:
@@ -283,18 +282,17 @@ paths:
             type: integer
 
       responses:
-        "200":
+        '200':
           description: Предложение по аренде ID:{offerId} удалено.
 
-        "204":
-          description: No content.
+        '404':
+          description: Offer with id {offerId} not found.
 
-        "401":
+        '401':
           description: Пользователь должен быть авторизован.
 
-        "403":
+        '403':
           description: У пользователя нет прав редактировать данное предложение по аренде.
-
 
   /comments/{offerId}:
     get:
@@ -311,7 +309,7 @@ paths:
             example: 1
 
       responses:
-        "200":
+        '200':
           description: Список комментариев для предложения по аренде.
           content:
             application/json:
@@ -351,7 +349,7 @@ paths:
         required: true
 
       responses:
-        "200":
+        '200':
           description: Комментарий создан, присылаю его в ответ.
           content:
             application/json:
@@ -364,10 +362,10 @@ paths:
                         type: string
                         example: 12.3.23
 
-        "401":
+        '401':
           description: Для размещения комментария, пользователь должен быть авторизован.
 
-        "400":
+        '400':
           description: Незаполненны обязательные поля.
 
   /cites:
@@ -378,7 +376,7 @@ paths:
       description: Получение списка городов.
 
       responses:
-        "200":
+        '200':
           description: Список городов.
           content:
             application/json:
@@ -398,15 +396,47 @@ paths:
           name: cityId
           required: true
           schema:
-            type: integer
-            example: 1
+            type: string
+            example: shaiuhd27661djawd
 
       responses:
-        "200":
+        '200':
           description: Получение одного города.
           content:
             application/json:
               schema:
                 $ref: './schemas/city/city.yml'
-        '204':
-          description: No Content
+        '404':
+          description: City with id {cityId} not found.
+
+  /cites/{cityId}/offers:
+    get:
+      tags:
+        - cites
+      summary: Получить список предложений по аренде по одному городу
+      description: Получение одного города.
+      parameters:
+        - in: path
+          name: cityId
+          required: true
+          schema:
+            type: string
+            example: shaiuhd27661djawd
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            example: 1
+
+      responses:
+        '200':
+          description: Список предложений по аренде.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './schemas/offer/offerListItem.yml'
+
+        '404':
+          description: City with id {cityId} not found.

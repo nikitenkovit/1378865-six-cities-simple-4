@@ -11,7 +11,7 @@ import { RestSchema } from '../../core/config/rest.schema.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import UserRdo from './rdo/user.rdo.js';
 import LoginUserDto from './dto/login-user.dto.js';
-import { UserPath } from './user.constant.js';
+import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 
 const USER_CONTROLLER = 'UserController';
 
@@ -26,8 +26,18 @@ export default class UserController extends Controller {
     super(logger);
     this.logger.info('Register routes for UserController…');
 
-    this.addRoute({ path: UserPath.REGISTER, method: HttpMethod.Post, handler: this.create });
-    this.addRoute({ path: UserPath.LOGIN, method: HttpMethod.Post, handler: this.login });
+    this.addRoute({
+      path: '/register',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateUserDto)],
+    });
+    this.addRoute({
+      path: '/login',
+      method: HttpMethod.Post,
+      handler: this.login,
+      middlewares: [new ValidateDtoMiddleware(LoginUserDto)],
+    });
   }
 
   public async create(
