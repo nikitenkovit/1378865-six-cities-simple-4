@@ -1,5 +1,4 @@
 export * from './city.type';
-export * from './comment.type';
 export * from './coordinates.type';
 export * from './offer.type';
 export * from './user.type';

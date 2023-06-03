@@ -9,10 +9,14 @@ import { fillDTO } from '../../core/helpers/index.js';
 import OfferShortRdo from './rdo/offer-short.rdo.js';
 import CreateOfferDto from './dto/create-offer.dto.js';
 import { OfferRequestParams, OfferRequestQuery } from '../../types/offer-request-query.type.js';
-import { OfferPath } from './offer.constant.js';
 import OfferDetailedRdo from './rdo/offer-detailed.rdo.js';
 import { ParamsDictionary } from 'express-serve-static-core';
 import UpdateOfferDto from './dto/update-offer.dto.js';
+import { OfferEntity } from './offer.entity';
+import { CommentServiceInterface } from '../comment/comment-service.interface.js';
+import CommentRdo from '../comment/rdo/comment.rdo.js';
+import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
+import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 
 const OFFER_CONTROLLER = 'OfferController';
 
@@ -22,24 +26,47 @@ export default class OfferController extends Controller {
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.OfferServiceInterface)
     private readonly offerService: OfferServiceInterface,
+    @inject(AppComponent.CommentServiceInterface)
+    private readonly commentService: CommentServiceInterface,
   ) {
     super(logger);
 
     this.logger.info('Register routes for OfferController…');
 
-    this.addRoute({ path: OfferPath.BASE, method: HttpMethod.Get, handler: this.index }); // TODO есть способ ЯВНО указать маршрут с необязаьельным параметром ?limit=2
-    this.addRoute({ path: OfferPath.ONE_BY_ID, method: HttpMethod.Patch, handler: this.update });
+    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
     this.addRoute({
-      path: OfferPath.ONE_BY_ID,
-      method: HttpMethod.Get,
-      handler: this.detailedOffer,
+      path: '/:offerId',
+      method: HttpMethod.Patch,
+      handler: this.update,
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new ValidateDtoMiddleware(UpdateOfferDto),
+      ],
     });
     this.addRoute({
-      path: OfferPath.ONE_BY_ID,
+      path: '/:offerId',
+      method: HttpMethod.Get,
+      handler: this.show,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+    });
+    this.addRoute({
+      path: '/:offerId',
       method: HttpMethod.Delete,
       handler: this.delete,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')],
     });
-    this.addRoute({ path: OfferPath.BASE, method: HttpMethod.Post, handler: this.create });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateOfferDto)],
+    });
+    this.addRoute({
+      path: '/:offerId/comments',
+      method: HttpMethod.Get,
+      handler: this.getComments,
+      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+    });
   }
 
   public async index(
@@ -48,10 +75,10 @@ export default class OfferController extends Controller {
   ): Promise<void> {
     const offers = await this.offerService.find(query.limit);
     const offerToResponse = fillDTO(OfferShortRdo, offers);
-    this.ok(res, offerToResponse);
+    this.ok<OfferShortRdo>(res, offerToResponse);
   }
 
-  public async detailedOffer(
+  public async show(
     { params }: Request<ParamsDictionary | OfferRequestParams>,
     res: Response,
   ): Promise<void> {
@@ -59,10 +86,10 @@ export default class OfferController extends Controller {
     const offer = await this.offerService.findById(offerId);
 
     if (!offer) {
-      this.noContent(OFFER_CONTROLLER);
+      this.notFound(`Offer with id ${offerId} not found.`, OFFER_CONTROLLER);
     }
 
-    this.ok(res, fillDTO(OfferDetailedRdo, offer));
+    this.ok<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, offer));
   }
 
   public async delete(
@@ -72,26 +99,31 @@ export default class OfferController extends Controller {
     const { offerId } = params;
     const offer = await this.offerService.findById(offerId);
 
-    if (!offer) {
-      this.noContent(OFFER_CONTROLLER);
-    }
-
     await this.offerService.deleteById(offerId);
 
-    this.ok(res, `Предложение по аренде ID:${offerId} удалено.`);
+    if (!offer) {
+      return this.notFound(`Offer with id ${offerId} not found.`, OFFER_CONTROLLER);
+    }
+
+    await this.commentService.deleteByOfferId(offerId);
+
+    this.noContent<OfferEntity>(res, offer);
   }
 
   public async update(
-    { body, params }: Request<ParamsDictionary | OfferRequestParams, Record<string, unknown>, UpdateOfferDto>,
-    res: Response
+    {
+      body,
+      params,
+    }: Request<ParamsDictionary | OfferRequestParams, Record<string, unknown>, UpdateOfferDto>,
+    res: Response,
   ): Promise<void> {
     const updatedOffer = await this.offerService.updateById(params.offerId, body);
 
     if (!updatedOffer) {
-      this.noContent(OFFER_CONTROLLER); // TODO завети для всех подобных случаев метон notFound(404)
+      this.notFound(`Offer with id ${params.offerId} not found.`, OFFER_CONTROLLER);
     }
 
-    this.ok(res, fillDTO(OfferDetailedRdo, updatedOffer));
+    this.ok<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, updatedOffer));
   }
 
   public async create(
@@ -99,8 +131,20 @@ export default class OfferController extends Controller {
     res: Response,
   ): Promise<void> {
     const result = await this.offerService.create(body);
-    const createdOffer = await this.offerService.findById(result.id); // TODO фронт должен мапить в объект ID юзера?
+    const createdOffer = await this.offerService.findById(result.id);
 
-    this.created(res, fillDTO(OfferDetailedRdo, createdOffer));
+    this.created<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, createdOffer));
+  }
+
+  public async getComments(
+    { params }: Request<ParamsDictionary | OfferRequestParams, object, object>,
+    res: Response,
+  ): Promise<void> {
+    if (!(await this.offerService.exists(params.offerId))) {
+      this.notFound(`Offer with id ${params.offerId} not found.`, OFFER_CONTROLLER);
+    }
+
+    const comments = await this.commentService.findByOfferId(params.offerId);
+    this.ok(res, fillDTO(CommentRdo, comments));
   }
 }

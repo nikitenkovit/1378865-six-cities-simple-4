@@ -7,7 +7,6 @@ import { DatabaseClientInterface } from '../core/database-client/database-client
 import { getMongoURI } from '../core/helpers/index.js';
 import express, { Express } from 'express';
 import { ControllerInterface } from '../core/controller/controller.interface.js';
-import { Route } from '../constants/route.js';
 import { ExceptionFilterInterface } from '../core/expception-filters/exception-filter.interface.js';
 
 @injectable()
@@ -23,6 +22,7 @@ export default class RestApplication {
     @inject(AppComponent.ExceptionFilterInterface) private readonly exceptionFilter: ExceptionFilterInterface,
     @inject(AppComponent.UserController) private readonly userController: ControllerInterface,
     @inject(AppComponent.CityController) private readonly cityController: ControllerInterface,
+    @inject(AppComponent.CommentController) private commentController: ControllerInterface,
   ) {
     this.expressApplication = express();
   }
@@ -54,9 +54,10 @@ export default class RestApplication {
 
   private async _initRoutes() {
     this.logger.info('Controller initialization…');
-    this.expressApplication.use(Route.OFFERS, this.offerController.router);
-    this.expressApplication.use(Route.USERS, this.userController.router);
-    this.expressApplication.use(Route.CITES, this.cityController.router);
+    this.expressApplication.use('/offers', this.offerController.router);
+    this.expressApplication.use('/users', this.userController.router);
+    this.expressApplication.use('/cites', this.cityController.router);
+    this.expressApplication.use('/comments', this.commentController.router);
     this.logger.info('Controller initialization completed');
   }
 

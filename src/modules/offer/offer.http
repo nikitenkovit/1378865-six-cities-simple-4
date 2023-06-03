@@ -6,13 +6,12 @@ Content-Type: application/json
 ###
 
 ## Получить детальную информацию по одному предложению по аренде
-GET http://localhost:5000/offers/6475d490cc8b7c820364129f HTTP/1.1
-Content-Type: application/json
+GET http://localhost:5000/offers/647745f79cbf78edb8c64ac7 HTTP/1.1
 
 ###
 
 ## Удалить предложение по аренде
-DELETE http://localhost:5000/offers/647723275fb902c00bb5933d HTTP/1.1
+DELETE http://localhost:5000/offers/647745f69cbf78edb8c64ab6 HTTP/1.1
 Content-Type: application/json
 
 ###
@@ -22,20 +21,19 @@ POST http://localhost:5000/offers HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "New Test Title1!!!",
-  "description": "test description",
+  "title": "Test Title!!!)))",
+  "description": "The minimum test descriptio",
   "city": "647745f69cbf78edb8c64aaa",
   "previewImage": "./previewImage.png",
-  "images": ["./image.png"],
+  "images": ["./image.png","./image.png","./image.png","./image.png","./image.png","./image.png"],
   "isPremium": true,
   "type": "house",
   "bedrooms": 8,
   "maxGuests": 10,
   "price": 190,
-  "goods": ["bath"],
+  "goods": ["Laptop friendly workspace"],
   "location": { "latitude": 42.3, "longitude": 2 },
-  "userId": "647745f69cbf78edb8c64aac",
-  "rating": 5
+  "userId": "647745f69cbf78edb8c64aac"
 }
 
 ###
@@ -47,5 +45,11 @@ Content-Type: application/json
 {
   "title": "UPDATED TITLE!"
 }
+
+###
+
+## Список комментариев к объявлению
+GET http://localhost:5000/offers/647745f69cbf78edb8c64ab6/comments HTTP/1.1
+Content-Type: application/json
 
 ###

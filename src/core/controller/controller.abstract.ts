@@ -20,7 +20,13 @@ export abstract class Controller implements ControllerInterface {
   }
 
   public addRoute(route: RouteInterface) {
-    this._router[route.method](route.path, asyncHandler(route.handler.bind(this)));
+    const routeHandler = asyncHandler(route.handler.bind(this));
+    const middlewares = route.middlewares?.map(
+      (middleware) => asyncHandler(middleware.execute.bind(middleware))
+    );
+
+    const allHandlers = middlewares ? [...middlewares, routeHandler] : routeHandler;
+    this._router[route.method](route.path, allHandlers);
     this.logger.info(`Route registered: ${route.method.toUpperCase()} ${route.path}`);
   }
 
@@ -38,8 +44,12 @@ export abstract class Controller implements ControllerInterface {
 
   // TODO Переделать ошибки
 
-  public noContent(detail?: string): void {
-    throw new HttpError(StatusCodes.NO_CONTENT, 'No Content', detail);
+  public notFound(errorText: string, detail?: string): void {
+    throw new HttpError(StatusCodes.NOT_FOUND, errorText, detail);
+  }
+
+  public noContent<T>(res: Response, data: T): void {
+    this.send(res, StatusCodes.NO_CONTENT, data);
   }
 
   public conflict(errorText: string, detail?: string): void {

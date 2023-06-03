@@ -18,8 +18,8 @@ export default class OfferDetailedRdo {
   @Expose()
   public createdAt!: string;
 
-  @Type(() => CityRdo)
   @Expose()
+  @Type(() => CityRdo)
   public city!: CityRdo;
 
   @Expose()
@@ -30,9 +30,6 @@ export default class OfferDetailedRdo {
 
   @Expose()
   public isPremium!: boolean;
-
-  @Expose()
-  public rating!: number;
 
   @Expose()
   public type!: OfferType;
@@ -49,13 +46,17 @@ export default class OfferDetailedRdo {
   @Expose()
   public goods!: GoodsType[];
 
-  @Type(() => UserRdo)
   @Expose({ name: 'userId' })
+  @Type(() => UserRdo)
   public host!: UserRdo;
+
+  @Expose()
+  public location!: Coordinates;
+
+  @Expose()
+  public rating!: number;
 
   @Expose()
   public commentCount!: number;
 
-  @Expose()
-  public location!: Coordinates;
 }
