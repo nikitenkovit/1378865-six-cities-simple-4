@@ -1,5 +1,4 @@
 import typegoose, { defaultClasses, getModelForClass } from '@typegoose/typegoose';
-import { EMAIL_REG_EXP } from '../../constants/index.js';
 import { createSHA256 } from '../../core/helpers/index.js';
 import { User } from '../../types/user.type.js';
 
@@ -16,25 +15,21 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({
     required: true,
     trim: true,
-    minlength: [1, 'Min length for name is 1'],
-    maxlength: [15, 'Max length for name is 15'],
   })
   public name!: string;
 
-  @prop({ unique: true, required: true, match: [EMAIL_REG_EXP, 'Email is incorrect'] })
+  @prop({ unique: true, required: true })
   public email!: string;
 
-  @prop({ required: false }) // TODO добавить валидацию типа файла
+  @prop({ required: false })
   public avatarPath?: string;
 
   @prop({
     required: true,
-    minlength: [6, 'Min length for password is 6'],
-    // maxlength: [12, 'Max length for password is 12'],  // TODO как типизировать длинну пароля, учитывая, хеш?
   })
   public password!: string;
 
-  @prop({ required: true, match: [Boolean, 'isPro is incorrect'] })
+  @prop({ required: true })
   public isPro!: boolean;
 
   constructor(userData: User) {

@@ -14,20 +14,15 @@ export interface OfferEntity extends defaultClasses.Base {}
   },
 })
 export class OfferEntity extends defaultClasses.TimeStamps {
-  // TODO перенести всю валидацию в ДТО
   @prop({
     required: true,
     trim: true,
-    // minlength: [10, 'Min length for title is 10'],
-    // maxlength: [100, 'Max length for title is 100'],
   })
   public title!: string;
 
   @prop({
     required: true,
     trim: true,
-    // minlength: [20, 'Min length for description is 20'],
-    // maxlength: [1024, 'Max length for description is 1024'],
   })
   public description!: string;
 
@@ -56,8 +51,6 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({
     required: false,
     default: 0,
-    // min: [1, 'Min rating is 1'],
-    // max: [5, 'Max rating is 5'],
   })
   public rating!: number;
 
@@ -69,22 +62,16 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: true,
-    min: [1, 'Min bedrooms is 1'],
-    max: [8, 'Max bedrooms is 8'],
   })
   public bedrooms!: number;
 
   @prop({
     required: true,
-    min: [1, 'min maxGuests is 1'],
-    max: [10, 'max maxGuests is 10'],
   })
   public maxGuests!: number;
 
   @prop({
     required: true,
-    min: [100, 'min price is 100'],
-    max: [100000, 'max price is 100000'],
   })
   public price!: number;
 

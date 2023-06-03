@@ -43,4 +43,8 @@ export default class CityService implements CityServiceInterface {
   public async findById(cityId: string): Promise<DocumentType<CityEntity> | null> {
     return this.cityModel.findById(cityId).exec();
   }
+
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.cityModel.exists({ _id: documentId })) !== null;
+  }
 }

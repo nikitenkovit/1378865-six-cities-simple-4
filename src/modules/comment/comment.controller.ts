@@ -37,7 +37,6 @@ export default class CommentController extends Controller {
     res: Response,
   ): Promise<void> {
     if (!(await this.offerService.exists(body.offerId))) {
-      // todo перенести в миделвару
       this.notFound(`Offer with id ${body.offerId} not found.`, COMMENT_CONTROLLER);
     }
 

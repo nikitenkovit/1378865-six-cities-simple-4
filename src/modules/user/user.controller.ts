@@ -12,6 +12,9 @@ import { fillDTO } from '../../core/helpers/index.js';
 import UserRdo from './rdo/user.rdo.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
+import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
+import { UploadFileMiddleware } from '../../core/middlewares/upload-file.middleware.js';
+import UpdateUserDto from './dto/update-user.dto.js';
 
 const USER_CONTROLLER = 'UserController';
 
@@ -37,6 +40,16 @@ export default class UserController extends Controller {
       method: HttpMethod.Post,
       handler: this.login,
       middlewares: [new ValidateDtoMiddleware(LoginUserDto)],
+    });
+    this.addRoute({
+      path: '/:userId/avatar',
+      method: HttpMethod.Post,
+      handler: this.uploadAvatar,
+      middlewares: [
+        new ValidateObjectIdMiddleware('userId'),
+        new ValidateDtoMiddleware(UpdateUserDto),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
+      ],
     });
   }
 
@@ -65,5 +78,15 @@ export default class UserController extends Controller {
     }
 
     this.notImplemented(USER_CONTROLLER);
+  }
+
+  public async uploadAvatar(req: Request, res: Response) {
+    const { userId } = req.params;
+
+    const updatedUser = await this.userService.updateById(userId, {
+      avatarPath: req.file?.filename,
+    });
+    // TODO добавить загрузку изображений в OFFER
+    this.ok<UpdateUserDto | null>(res, updatedUser);
   }
 }

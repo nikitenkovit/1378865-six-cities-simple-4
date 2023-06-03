@@ -17,8 +17,7 @@ import { CommentServiceInterface } from '../comment/comment-service.interface.js
 import CommentRdo from '../comment/rdo/comment.rdo.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
-
-const OFFER_CONTROLLER = 'OfferController';
+import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 
 @injectable()
 export default class OfferController extends Controller {
@@ -41,19 +40,26 @@ export default class OfferController extends Controller {
       middlewares: [
         new ValidateObjectIdMiddleware('offerId'),
         new ValidateDtoMiddleware(UpdateOfferDto),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ],
     });
     this.addRoute({
       path: '/:offerId',
       method: HttpMethod.Get,
       handler: this.show,
-      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+      ],
     });
     this.addRoute({
       path: '/:offerId',
       method: HttpMethod.Delete,
       handler: this.delete,
-      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+      ],
     });
     this.addRoute({
       path: '/',
@@ -65,7 +71,10 @@ export default class OfferController extends Controller {
       path: '/:offerId/comments',
       method: HttpMethod.Get,
       handler: this.getComments,
-      middlewares: [new ValidateObjectIdMiddleware('offerId')],
+      middlewares: [
+        new ValidateObjectIdMiddleware('offerId'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+      ],
     });
   }
 
@@ -85,10 +94,6 @@ export default class OfferController extends Controller {
     const { offerId } = params;
     const offer = await this.offerService.findById(offerId);
 
-    if (!offer) {
-      this.notFound(`Offer with id ${offerId} not found.`, OFFER_CONTROLLER);
-    }
-
     this.ok<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, offer));
   }
 
@@ -97,17 +102,11 @@ export default class OfferController extends Controller {
     res: Response,
   ): Promise<void> {
     const { offerId } = params;
-    const offer = await this.offerService.findById(offerId);
-
-    await this.offerService.deleteById(offerId);
-
-    if (!offer) {
-      return this.notFound(`Offer with id ${offerId} not found.`, OFFER_CONTROLLER);
-    }
+    const offer = await this.offerService.deleteById(offerId);
 
     await this.commentService.deleteByOfferId(offerId);
 
-    this.noContent<OfferEntity>(res, offer);
+    this.noContent<OfferEntity | null>(res, offer);
   }
 
   public async update(
@@ -118,10 +117,6 @@ export default class OfferController extends Controller {
     res: Response,
   ): Promise<void> {
     const updatedOffer = await this.offerService.updateById(params.offerId, body);
-
-    if (!updatedOffer) {
-      this.notFound(`Offer with id ${params.offerId} not found.`, OFFER_CONTROLLER);
-    }
 
     this.ok<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, updatedOffer));
   }
@@ -140,10 +135,6 @@ export default class OfferController extends Controller {
     { params }: Request<ParamsDictionary | OfferRequestParams, object, object>,
     res: Response,
   ): Promise<void> {
-    if (!(await this.offerService.exists(params.offerId))) {
-      this.notFound(`Offer with id ${params.offerId} not found.`, OFFER_CONTROLLER);
-    }
-
     const comments = await this.commentService.findByOfferId(params.offerId);
     this.ok(res, fillDTO(CommentRdo, comments));
   }

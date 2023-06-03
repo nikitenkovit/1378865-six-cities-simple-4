@@ -12,8 +12,7 @@ import { cityRequestParams, cityRequestQuery } from '../../types/city-request-qu
 import { OfferServiceInterface } from '../offer/offer-service.interface.js';
 import OfferShortRdo from '../offer/rdo/offer-short.rdo.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
-
-const CITY_CONTROLLER = 'CityController';
+import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 
 @injectable()
 export default class CityController extends Controller {
@@ -33,14 +32,20 @@ export default class CityController extends Controller {
       path: '/:cityId',
       method: HttpMethod.Get,
       handler: this.show,
-      middlewares: [new ValidateObjectIdMiddleware('cityId')],
+      middlewares: [
+        new ValidateObjectIdMiddleware('cityId'),
+        new DocumentExistsMiddleware(this.cityService, 'City', 'cityId'),
+      ],
     });
 
     this.addRoute({
       path: '/:cityId/offers',
       method: HttpMethod.Get,
-      handler: this.getOffersFromCategory, // todo 123 добавить обязательно валидацию проверки существования города в базе
-      middlewares: [new ValidateObjectIdMiddleware('cityId')],
+      handler: this.getOffersFromCategory,
+      middlewares: [
+        new ValidateObjectIdMiddleware('cityId'),
+        new DocumentExistsMiddleware(this.cityService, 'City', 'cityId'),
+      ],
     });
   }
 
@@ -56,10 +61,6 @@ export default class CityController extends Controller {
   ): Promise<void> {
     const { cityId } = params;
     const city = await this.cityService.findById(cityId);
-
-    if (!city) {
-      this.notFound(`City with id ${cityId} not found.`, CITY_CONTROLLER);
-    }
 
     this.ok(res, fillDTO(CityRdo, city));
   }
