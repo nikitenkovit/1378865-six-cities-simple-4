@@ -18,6 +18,14 @@ import CommentRdo from '../comment/rdo/comment.rdo.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
+import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
+import { CheckUserMatchInOfferMiddleware } from '../../core/middlewares/CheckUserMatchInOffer.middleware.js';
+import OfferPreviewImageRdo from './rdo/offer-preview-image.rdo.js';
+import { UploadFileMiddleware } from '../../core/middlewares/upload-file.middleware.js';
+import { ConfigInterface } from '../../core/config/config.interface.js';
+import { RestSchema } from '../../core/config/rest.schema.js';
+import OfferImagesRdo from './rdo/offer-images.rdo.js';
+import { UploadMultipleFilesMiddleware } from '../../core/middlewares/upload-multiple-files.middleware.js';
 
 @injectable()
 export default class OfferController extends Controller {
@@ -27,6 +35,8 @@ export default class OfferController extends Controller {
     private readonly offerService: OfferServiceInterface,
     @inject(AppComponent.CommentServiceInterface)
     private readonly commentService: CommentServiceInterface,
+    @inject(AppComponent.ConfigInterface)
+    private readonly configService: ConfigInterface<RestSchema>,
   ) {
     super(logger);
 
@@ -38,6 +48,11 @@ export default class OfferController extends Controller {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
+        new PrivateRouteMiddleware(),
+        new CheckUserMatchInOfferMiddleware(
+          this.offerService,
+          'У пользователя нет прав редактировать данное предложение по аренде.',
+        ),
         new ValidateObjectIdMiddleware('offerId'),
         new ValidateDtoMiddleware(UpdateOfferDto),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
@@ -57,6 +72,11 @@ export default class OfferController extends Controller {
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
+        new PrivateRouteMiddleware(),
+        new CheckUserMatchInOfferMiddleware(
+          this.offerService,
+          'У пользователя нет прав удалять данное предложение по аренде.',
+        ),
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
       ],
@@ -65,7 +85,7 @@ export default class OfferController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateOfferDto)],
+      middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateOfferDto)],
     });
     this.addRoute({
       path: '/:offerId/comments',
@@ -74,6 +94,36 @@ export default class OfferController extends Controller {
       middlewares: [
         new ValidateObjectIdMiddleware('offerId'),
         new DocumentExistsMiddleware(this.offerService, 'Offer', 'offerId'),
+      ],
+    });
+    this.addRoute({
+      path: '/:offerId/image',
+      method: HttpMethod.Post,
+      handler: this.uploadPreviewImage,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new CheckUserMatchInOfferMiddleware(
+          this.offerService,
+          'У пользователя нет прав редактировать данное предложение по аренде.',
+        ),
+        new ValidateObjectIdMiddleware('offerId'),
+        new ValidateDtoMiddleware(UpdateOfferDto),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'previewImage'),
+      ],
+    });
+    this.addRoute({
+      path: '/:offerId/pictures',
+      method: HttpMethod.Post,
+      handler: this.uploadImages,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new CheckUserMatchInOfferMiddleware(
+          this.offerService,
+          'У пользователя нет прав редактировать данное предложение по аренде.',
+        ),
+        new ValidateDtoMiddleware(UpdateOfferDto),
+        new ValidateObjectIdMiddleware('offerId'),
+        new UploadMultipleFilesMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'images'),
       ],
     });
   }
@@ -122,10 +172,10 @@ export default class OfferController extends Controller {
   }
 
   public async create(
-    { body }: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferDto>,
+    { body, user }: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferDto>,
     res: Response,
   ): Promise<void> {
-    const result = await this.offerService.create(body);
+    const result = await this.offerService.create({ ...body, userId: user.id });
     const createdOffer = await this.offerService.findById(result.id);
 
     this.created<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, createdOffer));
@@ -137,5 +187,34 @@ export default class OfferController extends Controller {
   ): Promise<void> {
     const comments = await this.commentService.findByOfferId(params.offerId);
     this.ok(res, fillDTO(CommentRdo, comments));
+  }
+
+  public async uploadPreviewImage(
+    req: Request<ParamsDictionary | OfferRequestParams>,
+    res: Response,
+  ) {
+    const { offerId } = req.params;
+    const updateOffer = await this.offerService.updateById(offerId, {
+      previewImage: req.file?.filename,
+    });
+    this.created(res, fillDTO(OfferPreviewImageRdo, updateOffer));
+  }
+
+  public async uploadImages(
+    { params, files }: Request<ParamsDictionary | OfferRequestParams>,
+    res: Response,
+  ) {
+    const { offerId } = params;
+
+    const images = (files as Express.Multer.File[])?.map((file) => file.filename) as [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+    ];
+    const updatedOffer = await this.offerService.updateById(offerId, { images });
+    this.ok(res, fillDTO(OfferImagesRdo, updatedOffer));
   }
 }

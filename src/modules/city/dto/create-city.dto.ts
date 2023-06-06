@@ -1,7 +1,12 @@
-import { CityType, Coordinates } from 'types';
+import { CityType } from 'types';
+import { IsEnum } from 'class-validator';
+import { Type } from 'class-transformer';
+import { Location } from './location.dto.js';
 
 export default class CreateCityDto {
-  // TODO валидация
+  @IsEnum(CityType)
   public name!: CityType;
-  public coordinates!: Coordinates;
+
+  @Type(() => Location)
+  public coordinates!: Location;
 }

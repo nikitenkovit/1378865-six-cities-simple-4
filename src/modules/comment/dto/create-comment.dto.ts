@@ -13,6 +13,5 @@ export default class CreateCommentDto {
   @IsMongoId({ message: 'Categories field must be an array of valid id' })
   public offerId!: string;
 
-  @IsMongoId({ message: 'Categories field must be an array of valid id' })
   public userId!: string;
 }

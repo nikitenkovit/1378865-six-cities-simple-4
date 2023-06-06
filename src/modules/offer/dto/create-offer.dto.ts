@@ -1,10 +1,8 @@
-import { Coordinates } from '../../../types/coordinates.type.js';
 import { GoodsType } from '../../../types/goods.type.js';
 import { OfferType } from '../../../types/offer.enum.js';
 import {
   MaxLength,
   MinLength,
-  IsObject,
   IsMongoId,
   IsArray,
   ArrayMinSize,
@@ -15,7 +13,11 @@ import {
   Min,
   Max,
   ArrayUnique,
+  IsOptional,
+  ValidateNested,
 } from 'class-validator';
+import { Location } from './location.dto.js';
+import {Type} from 'class-transformer';
 
 export default class CreateOfferDto {
   @MinLength(10, { message: 'Minimum title length must be 10' })
@@ -29,12 +31,13 @@ export default class CreateOfferDto {
   @IsMongoId({ message: 'city field must be valid an id' })
   public city!: string;
 
-  public previewImage!: string;
+  @IsOptional()
+  public previewImage?: string;
 
+  @IsOptional()
   @ArrayMinSize(6, { message: 'Minimum images is 6' })
   @ArrayMaxSize(6, { message: 'Maximum images is 6' })
-  @IsArray({ message: 'Field images must be an array' })
-  public images!: string[];
+  public images?: string[];
 
   @IsBoolean({ message: 'Field isPremium must be an boolean' })
   public isPremium!: boolean;
@@ -66,9 +69,9 @@ export default class CreateOfferDto {
   @ArrayUnique({ message: 'Field goods must be contain unique item' })
   public goods!: GoodsType[];
 
-  @IsMongoId({ message: 'userId field must be valid an id' })
   public userId!: string;
 
-  @IsObject({ message: 'location field must be object' })
-  public location!: Coordinates;
+  @ValidateNested({ message: 'This is not a "Location" type object!' })
+  @Type(() => Location)
+  public location!: Location;
 }

@@ -12,4 +12,5 @@ export interface ControllerInterface {
   conflict(errorText: string, detail?: string): void;
   unauthorized(errorText: string, detail?: string): void;
   notImplemented(detail?: string): void;
+  insufficientRights(errorText: string, detail?: string): void;
 }

@@ -10,6 +10,8 @@ import { HttpMethod } from '../../types/http-method.enum.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CommentRdo from './rdo/comment.rdo.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
+import { MINIMUM_RATING, RATING_PRECISION } from '../../constants/rating.js';
+import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 
 const COMMENT_CONTROLLER = 'CommentController';
 
@@ -28,23 +30,27 @@ export default class CommentController extends Controller {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateCommentDto)],
+      middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateCommentDto)],
     });
   }
 
   public async create(
-    { body }: Request<object, object, CreateCommentDto>,
+    { body, user }: Request<object, object, CreateCommentDto>,
     res: Response,
   ): Promise<void> {
     if (!(await this.offerService.exists(body.offerId))) {
       this.notFound(`Offer with id ${body.offerId} not found.`, COMMENT_CONTROLLER);
     }
 
-    const comment = await this.commentService.create(body);
+    const comment = await this.commentService.create({ ...body, userId: user.id });
 
     await this.offerService.incCommentCount(body.offerId);
 
-    // const swap = await this.offerService.updateRating(body.offerId); // TODO ДОДЕЛАТЬ!!!
+    const calculatedRating = await this.commentService.calcRating(body.offerId);
+
+    await this.offerService.updateById(body.offerId, {
+      rating: Number(calculatedRating?.toFixed(RATING_PRECISION) ?? MINIMUM_RATING),
+    });
 
     this.created(res, fillDTO(CommentRdo, comment));
   }

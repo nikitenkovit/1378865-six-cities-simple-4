@@ -1,57 +1,75 @@
-import { Coordinates } from '../../../types/coordinates.type.js';
 import { GoodsType } from '../../../types/goods.type.js';
 import { OfferType } from '../../../types/offer.enum.js';
 import {
   ArrayMaxSize,
-  ArrayMinSize, ArrayUnique, IsArray,
+  ArrayMinSize,
+  ArrayUnique,
+  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
-  IsMongoId, IsObject, Max,
+  IsMongoId,
+  Max,
   MaxLength,
   Min,
-  MinLength
+  MinLength,
+  IsOptional,
+  ValidateNested,
 } from 'class-validator';
+import { Location } from './location.dto.js';
+import {Type} from 'class-transformer';
 
 export default class UpdateOfferDto {
+  @IsOptional()
   @MinLength(10, { message: 'Minimum title length must be 10' })
   @MaxLength(100, { message: 'Maximum title length must be 100' })
   public title?: string;
 
+  @IsOptional()
   @MinLength(20, { message: 'Minimum description length must be 20' })
   @MaxLength(1024, { message: 'Maximum description length must be 1024' })
   public description?: string;
 
+  @IsOptional()
   @IsMongoId({ message: 'city field must be valid an id' })
   public city?: string;
 
+  @IsOptional()
   public previewImage?: string;
 
-  @ArrayMinSize(6, { message: 'Minimum images is 6' })
-  @ArrayMaxSize(6, { message: 'Maximum images is 6' })
-  public images?: string[];
+  @IsOptional()
+  @IsArray()
+  @ArrayMinSize(6)
+  @ArrayMaxSize(6)
+  public images?: [string, string, string, string, string, string];
 
+  @IsOptional()
   @IsBoolean({ message: 'Field isPremium must be an boolean' })
   public isPremium?: boolean;
 
+  @IsOptional()
   @IsEnum(OfferType, { message: 'Field type must be apartment, or room, or house, or hotel' })
   public type?: OfferType;
 
+  @IsOptional()
   @IsInt({ message: 'Field bedrooms must be an integer' })
   @Min(1, { message: 'Minimum bedrooms is 1' })
   @Max(8, { message: 'Maximum bedrooms is 8' })
   public bedrooms?: number;
 
+  @IsOptional()
   @IsInt({ message: 'Field maxGuests must be an integer' })
   @Min(1, { message: 'Minimum maxGuests is 1' })
   @Max(10, { message: 'Maximum maxGuests is 10' })
   public maxGuests?: number;
 
+  @IsOptional()
   @IsInt({ message: 'Field price must be an integer' })
   @Min(100, { message: 'Minimum price is 100' })
   @Max(100000, { message: 'Maximum price is 100000' })
   public price?: number;
 
+  @IsOptional()
   @IsArray({ message: 'Field comfort must be an array' })
   @IsEnum(GoodsType, {
     each: true,
@@ -61,6 +79,14 @@ export default class UpdateOfferDto {
   @ArrayUnique({ message: 'Field goods must be contain unique item' })
   public goods?: GoodsType[];
 
-  @IsObject({ message: 'location field must be object' })
-  public location?: Coordinates;
+  @IsOptional()
+  @ValidateNested({ message: 'This is not a "Location" type object!' })
+  @Type(() => Location)
+  public location?: Location;
+
+  @IsOptional()
+  @IsInt({ message: 'Field rating must be an integer' })
+  @Min(1, { message: 'Minimum rating is 1' })
+  @Max(5, { message: 'Maximum rating is 5' })
+  public rating?: number;
 }

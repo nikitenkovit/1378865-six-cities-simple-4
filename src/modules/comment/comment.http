@@ -1,12 +1,12 @@
 ## Создать комментарий
 POST http://localhost:5000/comments HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODYwNTY2ODQsImV4cCI6MTY4NjIyOTQ4NH0.JlIHegpfDJTu2k7NgqR_DTorviXMREvtIAaCdmH3vJo
 
 {
-  "text": "Life is like riding a bicycle. To keep your balance, you must keep moving.",
-  "rating": 4,
-  "offerId": "647745f79cbf78edb8c64ac7",
-  "userId": "647745f69cbf78edb8c64aac"
+  "text": "Все классно!!!)))",
+  "rating": 5,
+  "offerId": "647dcf18acd774ffd7c642a8"
 }
 
 ###

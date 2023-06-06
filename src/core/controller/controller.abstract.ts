@@ -21,8 +21,8 @@ export abstract class Controller implements ControllerInterface {
 
   public addRoute(route: RouteInterface) {
     const routeHandler = asyncHandler(route.handler.bind(this));
-    const middlewares = route.middlewares?.map(
-      (middleware) => asyncHandler(middleware.execute.bind(middleware))
+    const middlewares = route.middlewares?.map((middleware) =>
+      asyncHandler(middleware.execute.bind(middleware)),
     );
 
     const allHandlers = middlewares ? [...middlewares, routeHandler] : routeHandler;
@@ -42,8 +42,6 @@ export abstract class Controller implements ControllerInterface {
     this.send(res, StatusCodes.CREATED, data);
   }
 
-  // TODO Переделать ошибки
-
   public notFound(errorText: string, detail?: string): void {
     throw new HttpError(StatusCodes.NOT_FOUND, errorText, detail);
   }
@@ -62,5 +60,13 @@ export abstract class Controller implements ControllerInterface {
 
   public notImplemented(detail?: string): void {
     throw new HttpError(StatusCodes.NOT_IMPLEMENTED, 'Not implemented', detail);
+  }
+
+  public insufficientRights(errorText: string, detail?: string): void {
+    throw new HttpError(
+      StatusCodes.FORBIDDEN,
+      errorText,
+      detail,
+    );
   }
 }

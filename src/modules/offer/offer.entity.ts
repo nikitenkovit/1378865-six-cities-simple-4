@@ -4,6 +4,7 @@ import { GoodsType } from '../../types/goods.type.js';
 import { OfferType } from '../../types/offer.enum.js';
 import { UserEntity } from '../user/user.entity.js';
 import { CityEntity } from '../city/city.entity.js';
+import { DEFAULT_RATING } from '../../constants/rating.js';
 
 const { prop, modelOptions } = typegoose;
 
@@ -33,14 +34,14 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   public city!: Ref<CityEntity>;
 
   @prop({
-    required: true,
+    required: false,
   })
-  public previewImage!: string;
+  public previewImage?: string;
 
   @prop({
-    required: true,
+    required: false,
   })
-  public images!: string[];
+  public images?: string[];
 
   @prop({
     required: true,
@@ -50,7 +51,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
 
   @prop({
     required: false,
-    default: 0,
+    default: DEFAULT_RATING,
   })
   public rating!: number;
 
