@@ -11,18 +11,21 @@ GET http://localhost:5000/offers/647745f79cbf78edb8c64ac7 HTTP/1.1
 ###
 
 ## Удалить предложение по аренде
-DELETE http://localhost:5000/offers/647745f69cbf78edb8c64ab6 HTTP/1.1
+DELETE http://localhost:5000/offers/647f3cc538c28b7743c33d62 HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODYwNjQ3NzUsImV4cCI6MTY4NjIzNzU3NX0.KNJfBpAI-kSwFwrAAv_oOejVQUd28BVAMZMMKcMyV20
 
 ###
 
 ## Добавить новое предложение по аренде
+## Обязательно в city указать ID существующего в базе города!!!
 POST http://localhost:5000/offers HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODYwNTY2ODQsImV4cCI6MTY4NjIyOTQ4NH0.JlIHegpfDJTu2k7NgqR_DTorviXMREvtIAaCdmH3vJo
 
 {
-  "title": "Test Title!!!)))",
-  "description": "The minimum test descriptio",
+  "title": "Super blue marin!",
+  "description": "The minimum test description",
   "city": "647745f69cbf78edb8c64aaa",
   "previewImage": "./previewImage.png",
   "images": ["./image.png","./image.png","./image.png","./image.png","./image.png","./image.png"],
@@ -32,24 +35,87 @@ Content-Type: application/json
   "maxGuests": 10,
   "price": 190,
   "goods": ["Laptop friendly workspace"],
-  "location": { "latitude": 42.3, "longitude": 2 },
-  "userId": "647745f69cbf78edb8c64aac"
+  "location": { "latitude": 42.3, "longitude": 2 }
 }
 
 ###
 
 ## Редактировать предложение по аренде
-PATCH http://localhost:5000/offers/647729f74930b932d07d11d4 HTTP/1.1
+PATCH http://localhost:5000/offers/647f360d951ea96d2c2fe391 HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODYwNjQ3NzUsImV4cCI6MTY4NjIzNzU3NX0.KNJfBpAI-kSwFwrAAv_oOejVQUd28BVAMZMMKcMyV20
 
 {
-  "title": "UPDATED TITLE!"
+  "price": 427
 }
 
 ###
 
 ## Список комментариев к объявлению
-GET http://localhost:5000/offers/647745f69cbf78edb8c64ab6/comments HTTP/1.1
+GET http://localhost:5000/offers/647f3cc538c28b7743c33d62/comments HTTP/1.1
 Content-Type: application/json
+
+###
+
+## Отправка одной фотографии предложениея по аренде
+
+POST http://localhost:5000/offers/647f360d951ea96d2c2fe391/image HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODYxNTExMjgsImV4cCI6MTY4NjMyMzkyOH0.Cj_ZKmcfUwH2sjzqH4jHUIHiKzkrqj5wtgxS3FEei3Y
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="previewImage"; filename="123.png"
+Content-Type: image/png
+
+< /Users/19395113/Desktop/123.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+## Отправка колекции фотографий предложениея по аренде
+
+POST http://localhost:5000/offers/647f360d951ea96d2c2fe391/pictures HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODYxNTExMjgsImV4cCI6MTY4NjMyMzkyOH0.Cj_ZKmcfUwH2sjzqH4jHUIHiKzkrqj5wtgxS3FEei3Y
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="123.png"
+Content-Type: image/png
+
+< /Users/19395113/Desktop/123.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="123.png"
+Content-Type: image/png
+
+< /Users/19395113/Desktop/123.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="123.png"
+Content-Type: image/png
+
+< /Users/19395113/Desktop/123.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="123.png"
+Content-Type: image/png
+
+< /Users/19395113/Desktop/123.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="123.png"
+Content-Type: image/png
+
+< /Users/19395113/Desktop/123.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###

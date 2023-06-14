@@ -112,8 +112,6 @@ paths:
       description: Загружает изображение аватара пользователя. Изображение
         аватара должно быть в формате `png` или `jpg`.
 
-      #      TODO добавить parameters и requestBody
-
       responses:
         201:
           description: Аватар заугружен успешно
@@ -121,6 +119,9 @@ paths:
           description: Bad request
         401:
           description: Unauthorized
+
+        '403':
+          description: У пользователя нет прав редактировать данного пользователя.
 
   /offers:
     get:
@@ -260,11 +261,8 @@ paths:
         '404':
           description: Offer with id {offerId} not found.
 
-        '400':
-          description: Незаполненны обязательные поля.
-
         '401':
-          description: Пользователь должен быть авторизован.
+          description: Unauthorized
 
         '403':
           description: У пользователя нет прав редактировать данное предложение по аренде.
@@ -292,40 +290,7 @@ paths:
           description: Пользователь должен быть авторизован.
 
         '403':
-          description: У пользователя нет прав редактировать данное предложение по аренде.
-
-  /comments/{offerId}:
-    get:
-      tags:
-        - comments
-      summary: Список комментариев предложения по аренде
-      description: Получение списка комментариев для определенного предложения по аренде.
-      parameters:
-        - in: path
-          name: offerId
-          required: true
-          schema:
-            type: integer
-            example: 1
-
-      responses:
-        '200':
-          description: Список комментариев для предложения по аренде.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  allOf:
-                    - $ref: './schemas/comment/comment.yml'
-                    - type: object
-                      properties:
-                        date:
-                          type: string
-                          example: 12.3.23
-
-        '400':
-          description: Комментарии не найдены.
+          description: У пользователя нет прав удалять данное предложение по аренде.
 
     post:
       tags:
@@ -367,6 +332,95 @@ paths:
 
         '400':
           description: Незаполненны обязательные поля.
+
+  /offers/{offerId}/comments:
+    get:
+      tags:
+        - offers
+      summary: Список комментариев предложения по аренде
+      description: Получение списка комментариев для определенного предложения по аренде.
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: string
+            example: 1
+
+      responses:
+        '200':
+          description: Список комментариев для предложения по аренде.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - $ref: './schemas/comment/comment.yml'
+                    - type: object
+                      properties:
+                        date:
+                          type: string
+                          example: 12.3.23
+
+        '404':
+          description: Offer with {offerId} not found.
+
+  /offers/{offerId}/image:
+    post:
+      tags:
+        - offers
+      summary: Загрузить изображение предложения по аренде
+      description: Загружает изображение. Изображение должно быть в формате `png` или `jpg`.
+
+      responses:
+        '200':
+          description: Избражение загруженно.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  previewImage:
+                    type: string
+                    example: dauhwdiuahwdiuh21342.png
+
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized
+
+        '403':
+          description: У пользователя нет прав редактировать данное предложение по аренде.
+
+  /offers/{offerId}/pictures:
+    post:
+      tags:
+        - offers
+      summary: Загрузить 6 изображений предложения по аренде
+      description: Загружает изображения. Изображения должны быть в формате `png` или `jpg`.
+
+      responses:
+        '200':
+          description: Избражение загруженно.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    images:
+                      type: string
+                      example: dauhwdiuahwdiuh21342.png
+
+        400:
+          description: Bad request
+        401:
+          description: Unauthorized
+
+        '403':
+          description: У пользователя нет прав редактировать данное предложение по аренде.
 
   /cites:
     get:

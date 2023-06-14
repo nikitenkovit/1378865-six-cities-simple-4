@@ -8,15 +8,12 @@ import CreateOfferDto from './dto/create-offer.dto';
 import UpdateOfferDto from './dto/update-offer.dto';
 import { DEFAULT_OFFER_COUNT } from './offer.constant.js';
 import { SortType } from '../../types/sort-type.enum.js';
-import {CommentEntity} from '../comment/comment.entity.js';
 
 @injectable()
 export default class OfferService implements OfferServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
-    @inject(AppComponent.CommentModel)
-    private readonly commentModel: types.ModelType<CommentEntity>,
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
@@ -75,21 +72,6 @@ export default class OfferService implements OfferServiceInterface {
         { new: true },
       )
       .exec();
-  }
-
-  public async updateRating(offerId: string): Promise<DocumentType<OfferEntity>[]> {
-    // TODO доделать!!!
-    return await this.commentModel
-      .aggregate([
-        {
-          $group:
-              {
-                _id: '$offerId',
-                avgQuantity: { $avg: '$rating' }
-              },
-          $match : { offerId : offerId }
-        },
-      ]).exec();
   }
 
   public async exists(documentId: string): Promise<boolean> {
