@@ -18,7 +18,7 @@ export default class OfferDetailedRdo {
   @Expose()
   public createdAt!: string;
 
-  @Expose()
+  @Expose({ name: 'cityId' })
   @Type(() => CityRdo)
   public city!: CityRdo;
 
@@ -58,5 +58,4 @@ export default class OfferDetailedRdo {
 
   @Expose()
   public commentCount!: number;
-
 }

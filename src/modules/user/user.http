@@ -7,7 +7,6 @@ Content-Type: application/json
 {
   "name": "Vitaly",
   "email": "Vitaly@mail.ru",
-  "avatarPath": "torrance.png",
   "password": "12345678",
   "isPro": true
 }
@@ -28,21 +27,21 @@ Content-Type: application/json
 
 ## Отправка аватарки пользователю
 
-POST http://localhost:5000/users/647f28729dc2a1a364d9f514/avatar HTTP/1.1
+POST http://localhost:5000/users/648d49b956180852b32c6120/avatar HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODYwNTY2ODQsImV4cCI6MTY4NjIyOTQ4NH0.JlIHegpfDJTu2k7NgqR_DTorviXMREvtIAaCdmH3vJo
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDhkNDliOTU2MTgwODUyYjMyYzYxMjAiLCJpYXQiOjE2ODY5ODEwNjgsImV4cCI6MTY4NzE1Mzg2OH0.sxent0XizSGMOjKs_DpESXDHfLK3C7P4rjWdOGBlbNs
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="avatarPath"; filename="123.png"
 Content-Type: image/png
 
-< /Users/19395113/Desktop/123.png
+< ../../../static/default-avatar.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
 
 ## Проверить токен пользователя
 GET http://localhost:5000/users/login HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODYwNTY2ODQsImV4cCI6MTY4NjIyOTQ4NH0.JlIHegpfDJTu2k7NgqR_DTorviXMREvtIAaCdmH3vJo
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IlZpdGFseUBtYWlsLnJ1IiwiaWQiOiI2NDdmMjg3MjlkYzJhMWEzNjRkOWY1MTQiLCJpYXQiOjE2ODY3Mzc3MzcsImV4cCI6MTY4NjkxMDUzN30.0unNZjwSTorJkPj3fXyRhq9s92dyWt1inLLD25gdk3w
 
 ###

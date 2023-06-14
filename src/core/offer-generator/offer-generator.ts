@@ -9,9 +9,6 @@ import {
 import { User, GoodsType, OfferType, MockData } from 'types';
 
 const NUMBER_OF_IMAGES = 6;
-const RATING_MINIMUM = 1;
-const RATING_MAXIMUM = 5;
-const RATING_PRECISION = 1;
 const BEDROOMS_MINIMUM = 1;
 const BEDROOMS_MAXIMUM = 8;
 const MIN_GUESTS = 1;
@@ -37,7 +34,6 @@ export default class OfferGenerator implements OfferGeneratorInterface {
     const city = getRandomItem<string>(this.mockData.city);
     const previewImage = getRandomItem<string>(this.mockData.previewImage);
     const isPremium = getRandomItem<boolean>(this.mockData.isPremium);
-    const rating = generateRandomValue(RATING_MINIMUM, RATING_MAXIMUM, RATING_PRECISION);
     const type = getRandomItem<OfferType>(this.mockData.type);
     const bedrooms = generateRandomValue(BEDROOMS_MINIMUM, BEDROOMS_MAXIMUM);
     const maxGuests = generateRandomValue(MIN_GUESTS, MAX_GUESTS);
@@ -52,7 +48,6 @@ export default class OfferGenerator implements OfferGeneratorInterface {
       previewImage,
       images,
       isPremium,
-      rating,
       type,
       bedrooms,
       maxGuests,

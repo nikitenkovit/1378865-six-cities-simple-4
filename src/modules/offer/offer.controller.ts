@@ -26,6 +26,7 @@ import { ConfigInterface } from '../../core/config/config.interface.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import OfferImagesRdo from './rdo/offer-images.rdo.js';
 import { UploadMultipleFilesMiddleware } from '../../core/middlewares/upload-multiple-files.middleware.js';
+import { REQUIRED_IMAGE_ARRAY_LENGTH } from './offer.constant.js';
 
 @injectable()
 export default class OfferController extends Controller {
@@ -35,10 +36,9 @@ export default class OfferController extends Controller {
     private readonly offerService: OfferServiceInterface,
     @inject(AppComponent.CommentServiceInterface)
     private readonly commentService: CommentServiceInterface,
-    @inject(AppComponent.ConfigInterface)
-    private readonly configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for OfferController…');
 
@@ -107,7 +107,6 @@ export default class OfferController extends Controller {
           'У пользователя нет прав редактировать данное предложение по аренде.',
         ),
         new ValidateObjectIdMiddleware('offerId'),
-        new ValidateDtoMiddleware(UpdateOfferDto),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'previewImage'),
       ],
     });
@@ -121,7 +120,6 @@ export default class OfferController extends Controller {
           this.offerService,
           'У пользователя нет прав редактировать данное предложение по аренде.',
         ),
-        new ValidateDtoMiddleware(UpdateOfferDto),
         new ValidateObjectIdMiddleware('offerId'),
         new UploadMultipleFilesMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'images'),
       ],
@@ -214,6 +212,11 @@ export default class OfferController extends Controller {
       string,
       string,
     ];
+
+    if (images.length !== REQUIRED_IMAGE_ARRAY_LENGTH) {
+      this.badRequest('Images array length must be 6');
+    }
+
     const updatedOffer = await this.offerService.updateById(offerId, { images });
     this.ok(res, fillDTO(OfferImagesRdo, updatedOffer));
   }

@@ -69,6 +69,17 @@ paths:
                   token:
                     type: string
                     description: Bearer sdsd54s4fs54
+                  email:
+                    type: string
+                    description: 123@mail.ru
+                  name:
+                    type: string
+                    description: Vitaliy
+                  avatarPath:
+                    type: string
+                    description: 2.jpg
+                  isPro:
+                    type: boolean
 
         '401':
           description: Неправильный логин или пароль.
@@ -415,7 +426,7 @@ paths:
                       example: dauhwdiuahwdiuh21342.png
 
         400:
-          description: Bad request
+          description: Images array length must be 6
         401:
           description: Unauthorized
 
