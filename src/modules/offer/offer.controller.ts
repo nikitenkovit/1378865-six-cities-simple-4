@@ -27,6 +27,7 @@ import { RestSchema } from '../../core/config/rest.schema.js';
 import OfferImagesRdo from './rdo/offer-images.rdo.js';
 import { UploadMultipleFilesMiddleware } from '../../core/middlewares/upload-multiple-files.middleware.js';
 import { REQUIRED_IMAGE_ARRAY_LENGTH } from './offer.constant.js';
+import { CityServiceInterface } from '../city/city-service.interface.js';
 
 @injectable()
 export default class OfferController extends Controller {
@@ -37,6 +38,8 @@ export default class OfferController extends Controller {
     @inject(AppComponent.CommentServiceInterface)
     private readonly commentService: CommentServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.CityServiceInterface)
+    private readonly cityService: CityServiceInterface,
   ) {
     super(logger, configService);
 
@@ -164,6 +167,14 @@ export default class OfferController extends Controller {
     }: Request<ParamsDictionary | OfferRequestParams, Record<string, unknown>, UpdateOfferDto>,
     res: Response,
   ): Promise<void> {
+    if (body.cityId) {
+      const city = await this.cityService.findById(body?.cityId);
+
+      if (!city) {
+        this.badRequest(`Город с ID ${body?.cityId} не найден.`);
+      }
+    }
+
     const updatedOffer = await this.offerService.updateById(params.offerId, body);
 
     this.ok<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, updatedOffer));
@@ -173,7 +184,17 @@ export default class OfferController extends Controller {
     { body, user }: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferDto>,
     res: Response,
   ): Promise<void> {
-    const result = await this.offerService.create({ ...body, userId: user.id });
+    const city = await this.cityService.findById(body?.cityId);
+    console.log('city', city);
+    if (!city) {
+      this.badRequest(`Город с ID ${body?.cityId} не найден.`);
+    }
+
+    const result = await this.offerService.create({
+      ...body,
+      userId: user.id,
+      createdAt: Date.now().toString(), // перестраховка на случай попытки передать не верную дату создания предложения
+    });
     const createdOffer = await this.offerService.findById(result.id);
 
     this.created<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, createdOffer));

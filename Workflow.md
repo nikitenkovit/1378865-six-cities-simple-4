@@ -100,13 +100,9 @@ npm i
 ### файл .env
 в корне проекта создать файл .env и заполнить его по примеру фала .env-example
 
-### Предварительная загрузка
-1) Запустить веб сервер командой npm run mock:server.
-2) Выполнить создание файла с мок-дагнными командой необходимого количества
-npm run ts ./src/main.cli.ts -- --generate 3 ./mocks/test-data.tsv http://localhost:3123/api
-3) Выполнить импорт в базу данных.
-npm run ts ./src/main.cli.ts -- --import ./mocks/test-data.tsv admin test 127.0.0.1 cix-cities secret
-Предварительно должна быть запущенна база данных, используя доккер десктоп и команду docker compose up
+### Предварительная загрузка городов
+Выполнить команду npm run ts ./src/main.cli.ts -- --import-cities login password 127.0.0.1 cix-cities
+где: login-значение переменной окружения DB_USER; password-значение переменной окружения DB_PASSWORD
 
 ### запуск
 выполнить последовательно команды:

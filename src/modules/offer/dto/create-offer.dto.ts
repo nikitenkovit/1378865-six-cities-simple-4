@@ -15,6 +15,7 @@ import {
   ArrayUnique,
   IsOptional,
   ValidateNested,
+  IsDateString,
 } from 'class-validator';
 import { Location } from './location.dto.js';
 import { Type } from 'class-transformer';
@@ -70,6 +71,10 @@ export default class CreateOfferDto {
   public goods!: GoodsType[];
 
   public userId!: string;
+
+  @IsOptional()
+  @IsDateString()
+  public createdAt!: string;
 
   @ValidateNested({ message: 'This is not a "Location" type object!' })
   @Type(() => Location)
