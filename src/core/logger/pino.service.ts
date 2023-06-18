@@ -1,6 +1,7 @@
 import { LoggerInterface } from './logger.interface.js';
-import {Logger, pino, TransportTargetOptions} from 'pino';
+import { Logger, pino, TransportTargetOptions } from 'pino';
 import { injectable } from 'inversify';
+import * as fs from 'node:fs';
 
 const targets: TransportTargetOptions[] = [
   {
@@ -44,7 +45,14 @@ export default class PinoService implements LoggerInterface {
 
   constructor() {
     this.logger = pino({ transport: { targets } });
+
+    this.createLogDirectory();
+
     this.logger.info('Logger created…');
+  }
+
+  public createLogDirectory() {
+    fs.mkdirSync('./logs', { recursive: true });
   }
 
   public debug(message: string, ...args: unknown[]): void {

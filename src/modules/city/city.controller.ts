@@ -13,17 +13,18 @@ import { OfferServiceInterface } from '../offer/offer-service.interface.js';
 import OfferShortRdo from '../offer/rdo/offer-short.rdo.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
+import { ConfigInterface } from '../../core/config/config.interface.js';
+import { RestSchema } from '../../core/config/rest.schema.js';
 
 @injectable()
 export default class CityController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
-    @inject(AppComponent.CityServiceInterface)
-    private readonly cityService: CityServiceInterface,
-    @inject(AppComponent.OfferServiceInterface)
-    private readonly offerService: OfferServiceInterface,
+    @inject(AppComponent.CityServiceInterface) private readonly cityService: CityServiceInterface,
+    @inject(AppComponent.OfferServiceInterface) private readonly offerService: OfferServiceInterface,
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for CityController…');
 

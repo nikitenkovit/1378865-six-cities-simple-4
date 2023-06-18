@@ -13,4 +13,5 @@ export interface ControllerInterface {
   unauthorized(errorText: string, detail?: string): void;
   notImplemented(detail?: string): void;
   insufficientRights(errorText: string, detail?: string): void;
+  badRequest(errorText: string, detail?: string): void;
 }

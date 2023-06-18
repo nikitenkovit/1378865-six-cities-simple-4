@@ -15,9 +15,10 @@ import {
   ArrayUnique,
   IsOptional,
   ValidateNested,
+  IsDateString,
 } from 'class-validator';
 import { Location } from './location.dto.js';
-import {Type} from 'class-transformer';
+import { Type } from 'class-transformer';
 
 export default class CreateOfferDto {
   @MinLength(10, { message: 'Minimum title length must be 10' })
@@ -29,7 +30,7 @@ export default class CreateOfferDto {
   public description!: string;
 
   @IsMongoId({ message: 'city field must be valid an id' })
-  public city!: string;
+  public cityId!: string;
 
   @IsOptional()
   public previewImage?: string;
@@ -70,6 +71,10 @@ export default class CreateOfferDto {
   public goods!: GoodsType[];
 
   public userId!: string;
+
+  @IsOptional()
+  @IsDateString()
+  public createdAt!: string;
 
   @ValidateNested({ message: 'This is not a "Location" type object!' })
   @Type(() => Location)

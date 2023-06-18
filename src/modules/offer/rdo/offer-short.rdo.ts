@@ -11,7 +11,7 @@ export default class OfferShortRdo {
   @Expose()
   public createdAt!: string;
 
-  @Expose()
+  @Expose({ name: 'cityId' })
   @Type(() => CityRdo)
   public city!: CityRdo;
 

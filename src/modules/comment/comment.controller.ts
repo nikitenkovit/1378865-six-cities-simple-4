@@ -12,18 +12,19 @@ import CommentRdo from './rdo/comment.rdo.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { MINIMUM_RATING, RATING_PRECISION } from '../../constants/rating.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
+import { ConfigInterface } from '../../core/config/config.interface.js';
+import { RestSchema } from '../../core/config/rest.schema.js';
 
 const COMMENT_CONTROLLER = 'CommentController';
 
 export default class CommentController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
-    @inject(AppComponent.CommentServiceInterface)
-    private readonly commentService: CommentServiceInterface,
-    @inject(AppComponent.OfferServiceInterface)
-    private readonly offerService: OfferServiceInterface,
+    @inject(AppComponent.CommentServiceInterface) private readonly commentService: CommentServiceInterface,
+    @inject(AppComponent.OfferServiceInterface) private readonly offerService: OfferServiceInterface,
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for CommentController…');
     this.addRoute({

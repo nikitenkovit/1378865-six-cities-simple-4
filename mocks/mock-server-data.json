@@ -20,29 +20,20 @@
     ],
     "city": ["Paris", "Cologne", "Brussels", "Amsterdam", "Hamburg", "Dusseldorf"],
     "previewImage": [
-      "https://1.jpg",
-      "https://2.jpg",
-      "https://3.jpg",
-      "https://4.jpg",
-      "https://5.jpg",
-      "https://6.jpg",
-      "https://7.jpg"
+      "1.jpg",
+      "2.jpg",
+      "3.jpg",
+      "4.jpg",
+      "5.jpg",
+      "6.jpg"
     ],
     "images": [
-      "https://1.jpg",
-      "https://2.jpg",
-      "https://3.jpg",
-      "https://4.jpg",
-      "https://5.jpg",
-      "https://6.jpg",
-      "https://7.jpg",
-      "https://8.jpg",
-      "https://9.jpg",
-      "https://10.jpg",
-      "https://11.jpg",
-      "https://12.jpg",
-      "https://13.jpg",
-      "https://14.jpg"
+      "1.jpg",
+      "2.jpg",
+      "3.jpg",
+      "4.jpg",
+      "5.jpg",
+      "6.jpg"
     ],
     "isPremium": [true, false],
     "type": ["apartment", "room", "house", "hotel"],
@@ -65,14 +56,12 @@
       {
         "name": "Name2",
         "email": "email2@mail.ru",
-        "avatarPath": "https://2.jpg",
         "password": "eqfv44wsfdawd",
         "isPro": false
       },
       {
         "name": "Name3",
         "email": "email3@mail.ru",
-        "avatarPath": "https://3.jpg",
         "password": "12354awdawd",
         "isPro": true
       },
@@ -85,7 +74,6 @@
       {
         "name": "Name5",
         "email": "email5@mail.ru",
-        "avatarPath": "https://5.jpg",
         "password": "zaq1xsw2cde3",
         "isPro": true
       }

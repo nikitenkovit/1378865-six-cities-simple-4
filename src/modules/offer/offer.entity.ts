@@ -15,87 +15,49 @@ export interface OfferEntity extends defaultClasses.Base {}
   },
 })
 export class OfferEntity extends defaultClasses.TimeStamps {
-  @prop({
-    required: true,
-    trim: true,
-  })
+  @prop({ required: true, trim: true })
   public title!: string;
 
-  @prop({
-    required: true,
-    trim: true,
-  })
+  @prop({ required: true, trim: true })
   public description!: string;
 
-  @prop({
-    ref: CityEntity,
-    required: true,
-  })
-  public city!: Ref<CityEntity>;
+  @prop({ ref: CityEntity, required: true })
+  public cityId!: Ref<CityEntity>;
 
-  @prop({
-    required: false,
-  })
-  public previewImage?: string;
+  @prop({ required: true, trim: true, default: '' })
+  public previewImage!: string;
 
-  @prop({
-    required: false,
-  })
-  public images?: string[];
+  @prop({ required: true, trim: true })
+  public images!: string[];
 
-  @prop({
-    required: true,
-    default: true,
-  })
+  @prop({ required: true, default: true })
   public isPremium!: boolean;
 
-  @prop({
-    required: false,
-    default: DEFAULT_RATING,
-  })
+  @prop({ required: false, default: DEFAULT_RATING })
   public rating!: number;
 
-  @prop({
-    required: true,
-    enum: OfferType,
-  })
+  @prop({ required: true, enum: OfferType })
   public type!: OfferType;
 
-  @prop({
-    required: true,
-  })
+  @prop({ required: true })
   public bedrooms!: number;
 
-  @prop({
-    required: true,
-  })
+  @prop({ required: true })
   public maxGuests!: number;
 
-  @prop({
-    required: true,
-  })
+  @prop({ required: true })
   public price!: number;
 
-  @prop({
-    required: true,
-  })
+  @prop({ required: true })
   public goods!: GoodsType[];
 
-  @prop({
-    ref: UserEntity,
-    required: true,
-  })
+  @prop({ ref: UserEntity, required: true })
   public userId!: Ref<UserEntity>;
 
-  @prop({
-    required: false,
-    default: 0,
-  })
+  @prop({ required: false, default: 0 })
   public commentCount!: number;
 
-  @prop({
-    required: true,
-  })
+  @prop({ required: true })
   public location!: Coordinates;
 }
 

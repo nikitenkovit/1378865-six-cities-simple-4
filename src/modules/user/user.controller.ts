@@ -15,7 +15,7 @@ import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middl
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-objectid.middleware.js';
 import { UploadFileMiddleware } from '../../core/middlewares/upload-file.middleware.js';
 import UpdateUserDto from './dto/update-user.dto.js';
-import { UnknownRecord } from '../../types/UnknownRecord.type.js';
+import { UnknownRecord } from '../../types/unknown-record.type.js';
 import { JWT_ALGORITHM } from './user.constant.js';
 import LoggedUserRdo from './rdo/logged-user.rdo.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
@@ -29,9 +29,9 @@ export default class UserController extends Controller {
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.ConfigInterface)
-    private readonly configService: ConfigInterface<RestSchema>,
+    protected readonly configService: ConfigInterface<RestSchema>,
   ) {
-    super(logger);
+    super(logger, configService);
     this.logger.info('Register routes for UserController…');
 
     this.addRoute({
@@ -97,13 +97,10 @@ export default class UserController extends Controller {
       id: user?.id,
     });
 
-    this.ok(
-      res,
-      fillDTO(LoggedUserRdo, {
-        email: user?.email,
-        token,
-      }),
-    );
+    this.ok(res, {
+      ...fillDTO(LoggedUserRdo, user),
+      token,
+    });
   }
 
   public async uploadAvatar(req: Request, res: Response) {
@@ -115,12 +112,15 @@ export default class UserController extends Controller {
     this.ok<UserRdo>(res, fillDTO(UserRdo, updatedUser));
   }
 
-  public async checkAuthenticate({ user: { email } }: Request, res: Response) {
-    const foundedUser = await this.userService.findByEmail(email);
-
-    if (!foundedUser) {
+  public async checkAuthenticate(req: Request, res: Response) {
+    if (!req.user) {
       return this.unauthorized('Unauthorized', USER_CONTROLLER);
     }
+
+    const {
+      user: { email },
+    } = req;
+    const foundedUser = await this.userService.findByEmail(email);
 
     this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }

@@ -15,9 +15,12 @@ import {
   MinLength,
   IsOptional,
   ValidateNested,
+  IsString,
+  IsNumber,
 } from 'class-validator';
 import { Location } from './location.dto.js';
-import {Type} from 'class-transformer';
+import { Type } from 'class-transformer';
+import { RATING_PRECISION } from '../../../constants/rating.js';
 
 export default class UpdateOfferDto {
   @IsOptional()
@@ -32,9 +35,10 @@ export default class UpdateOfferDto {
 
   @IsOptional()
   @IsMongoId({ message: 'city field must be valid an id' })
-  public city?: string;
+  public cityId?: string;
 
   @IsOptional()
+  @IsString()
   public previewImage?: string;
 
   @IsOptional()
@@ -48,7 +52,10 @@ export default class UpdateOfferDto {
   public isPremium?: boolean;
 
   @IsOptional()
-  @IsEnum(OfferType, { message: 'Field type must be apartment, or room, or house, or hotel' })
+  @IsEnum(OfferType, {
+    each: true,
+    message: 'Field type must be apartment, or room, or house, or hotel',
+  })
   public type?: OfferType;
 
   @IsOptional()
@@ -85,7 +92,10 @@ export default class UpdateOfferDto {
   public location?: Location;
 
   @IsOptional()
-  @IsInt({ message: 'Field rating must be an integer' })
+  @IsNumber(
+    { maxDecimalPlaces: RATING_PRECISION },
+    { message: `Допускается максимум ${RATING_PRECISION} числел после запятой` },
+  )
   @Min(1, { message: 'Minimum rating is 1' })
   @Max(5, { message: 'Maximum rating is 5' })
   public rating?: number;

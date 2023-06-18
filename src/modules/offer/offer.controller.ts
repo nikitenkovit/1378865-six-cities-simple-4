@@ -26,6 +26,8 @@ import { ConfigInterface } from '../../core/config/config.interface.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import OfferImagesRdo from './rdo/offer-images.rdo.js';
 import { UploadMultipleFilesMiddleware } from '../../core/middlewares/upload-multiple-files.middleware.js';
+import { REQUIRED_IMAGE_ARRAY_LENGTH } from './offer.constant.js';
+import { CityServiceInterface } from '../city/city-service.interface.js';
 
 @injectable()
 export default class OfferController extends Controller {
@@ -35,10 +37,11 @@ export default class OfferController extends Controller {
     private readonly offerService: OfferServiceInterface,
     @inject(AppComponent.CommentServiceInterface)
     private readonly commentService: CommentServiceInterface,
-    @inject(AppComponent.ConfigInterface)
-    private readonly configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.CityServiceInterface)
+    private readonly cityService: CityServiceInterface,
   ) {
-    super(logger);
+    super(logger, configService);
 
     this.logger.info('Register routes for OfferController…');
 
@@ -107,7 +110,6 @@ export default class OfferController extends Controller {
           'У пользователя нет прав редактировать данное предложение по аренде.',
         ),
         new ValidateObjectIdMiddleware('offerId'),
-        new ValidateDtoMiddleware(UpdateOfferDto),
         new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'previewImage'),
       ],
     });
@@ -121,7 +123,6 @@ export default class OfferController extends Controller {
           this.offerService,
           'У пользователя нет прав редактировать данное предложение по аренде.',
         ),
-        new ValidateDtoMiddleware(UpdateOfferDto),
         new ValidateObjectIdMiddleware('offerId'),
         new UploadMultipleFilesMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'images'),
       ],
@@ -166,6 +167,14 @@ export default class OfferController extends Controller {
     }: Request<ParamsDictionary | OfferRequestParams, Record<string, unknown>, UpdateOfferDto>,
     res: Response,
   ): Promise<void> {
+    if (body.cityId) {
+      const city = await this.cityService.findById(body?.cityId);
+
+      if (!city) {
+        this.badRequest(`Город с ID ${body?.cityId} не найден.`);
+      }
+    }
+
     const updatedOffer = await this.offerService.updateById(params.offerId, body);
 
     this.ok<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, updatedOffer));
@@ -175,7 +184,17 @@ export default class OfferController extends Controller {
     { body, user }: Request<Record<string, unknown>, Record<string, unknown>, CreateOfferDto>,
     res: Response,
   ): Promise<void> {
-    const result = await this.offerService.create({ ...body, userId: user.id });
+    const city = await this.cityService.findById(body?.cityId);
+    console.log('city', city);
+    if (!city) {
+      this.badRequest(`Город с ID ${body?.cityId} не найден.`);
+    }
+
+    const result = await this.offerService.create({
+      ...body,
+      userId: user.id,
+      createdAt: Date.now().toString(), // перестраховка на случай попытки передать не верную дату создания предложения
+    });
     const createdOffer = await this.offerService.findById(result.id);
 
     this.created<OfferDetailedRdo>(res, fillDTO(OfferDetailedRdo, createdOffer));
@@ -214,6 +233,11 @@ export default class OfferController extends Controller {
       string,
       string,
     ];
+
+    if (images.length !== REQUIRED_IMAGE_ARRAY_LENGTH) {
+      this.badRequest('Images array length must be 6');
+    }
+
     const updatedOffer = await this.offerService.updateById(offerId, { images });
     this.ok(res, fillDTO(OfferImagesRdo, updatedOffer));
   }

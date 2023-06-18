@@ -6,8 +6,9 @@ import { OfferServiceInterface } from './offer-service.interface';
 import { OfferEntity } from './offer.entity';
 import CreateOfferDto from './dto/create-offer.dto';
 import UpdateOfferDto from './dto/update-offer.dto';
-import { DEFAULT_OFFER_COUNT } from './offer.constant.js';
+import { DEFAULT_OFFER_COUNT, DEFAULT_OFFER_IMAGES } from './offer.constant.js';
 import { SortType } from '../../types/sort-type.enum.js';
+import { getRandomItem } from '../../core/helpers/index.js';
 
 @injectable()
 export default class OfferService implements OfferServiceInterface {
@@ -17,14 +18,20 @@ export default class OfferService implements OfferServiceInterface {
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
-    const result = await this.offerModel.create(dto);
+    const previewImage = getRandomItem(DEFAULT_OFFER_IMAGES);
+
+    const result = await this.offerModel.create({
+      ...dto,
+      previewImage,
+      images: DEFAULT_OFFER_IMAGES,
+    });
     this.logger.info(`New offer created: ${dto.title}`);
 
     return result;
   }
 
   public async findById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
-    return this.offerModel.findById(offerId).populate(['userId', 'city']).exec();
+    return this.offerModel.findById(offerId).populate(['userId', 'cityId']).exec();
   }
 
   public async find(count?: number): Promise<DocumentType<OfferEntity>[]> {
@@ -33,7 +40,7 @@ export default class OfferService implements OfferServiceInterface {
     return this.offerModel
       .find({}, {}, { limit })
       .sort({ createdAt: SortType.Down })
-      .populate(['userId', 'city'])
+      .populate(['userId', 'cityId'])
       .exec();
   }
 
@@ -42,7 +49,7 @@ export default class OfferService implements OfferServiceInterface {
 
     return this.offerModel
       .find({ city: cityId }, {}, { limit })
-      .populate(['userId', 'city'])
+      .populate(['userId', 'cityId'])
       .exec();
   }
 
@@ -56,7 +63,7 @@ export default class OfferService implements OfferServiceInterface {
   ): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, { new: true })
-      .populate(['userId', 'city'])
+      .populate(['userId', 'cityId'])
       .exec();
   }
 
