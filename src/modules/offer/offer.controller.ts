@@ -193,7 +193,6 @@ export default class OfferController extends Controller {
     const result = await this.offerService.create({
       ...body,
       userId: user.id,
-      createdAt: Date.now().toString(), // перестраховка на случай попытки передать не верную дату создания предложения
     });
     const createdOffer = await this.offerService.findById(result.id);
 
