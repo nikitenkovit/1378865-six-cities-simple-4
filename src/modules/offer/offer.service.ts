@@ -24,6 +24,7 @@ export default class OfferService implements OfferServiceInterface {
       ...dto,
       previewImage,
       images: DEFAULT_OFFER_IMAGES,
+      createdAt: Date.now().toString(), // на случай попытки передать не верную дату создания предложения
     });
     this.logger.info(`New offer created: ${dto.title}`);
 

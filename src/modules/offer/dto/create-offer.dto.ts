@@ -74,7 +74,7 @@ export default class CreateOfferDto {
 
   @IsOptional()
   @IsDateString()
-  public createdAt!: string;
+  public createdAt?: string;
 
   @ValidateNested({ message: 'This is not a "Location" type object!' })
   @Type(() => Location)
