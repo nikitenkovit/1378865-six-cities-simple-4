@@ -27,7 +27,7 @@ export default class TSVFileReader extends EventEmitter implements FileReaderInt
       while ((nextLinePosition = remainingData.indexOf('\n')) >= FIRST_ARRAY_ELEMENT) {
         const completeRow = remainingData.slice(FIRST_ARRAY_ELEMENT, nextLinePosition + LINE_POSITION_STEP);
         remainingData = remainingData.slice(++nextLinePosition);
-        importedRowCount++;
+        importedRowCount += 1;
 
         await new Promise((resolve) => {
           this.emit('line', completeRow, resolve);
